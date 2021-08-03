@@ -5,6 +5,8 @@
 Abaixo, temos o código de uma DAG que faz o *download* e o processamento de dados de lançamento de foguetes.
 
 ```python
+# Extracted from Data Pipelines with Apache Airflow (check "Referências" section)
+
 import json
 import pathlib
 import requests
@@ -145,12 +147,12 @@ Operadores e tasks são um conceito confuso e podem parecer a mesma coisa, mas n
 
   De certa forma, podemos pensar que uma DAG simplesmente orquestra a execução de uma coleção de operadores. Ainda, como são os operadores que, conceitualmente, executam as tarefas em si, acabamos usando ambos os termos de forma intercambiável.
 
-- **Tasks.** Componentes que podem ser vistos como "gerenciadores" de operadores. De fato, embora do ponto de vista do usuário tarefas e operadores sejam equivalente, no Airflow ainda temos o componente `task`. 
+- **Tasks.** Componentes que podem ser vistos como "gerenciadores" de operadores. De fato, embora do ponto de vista do usuário tarefas e operadores sejam equivalente, no Airflow ainda temos o componente `task`.
 
   Tal componente é responsável por gerenciar o estado de operação dos operadores.
 
-  <p><img src="https://ahayasic.github.io/apache-airflow-in-a-nutshell/notes/assets/tasks_vs_operators.png" alt="tasks_vs_operators" /></p>
-  <p style="text-align: center; font-size: 0.75rem">
+  <p style="text-align: center;"><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/notes/assets/tasks_vs_operators.png" alt="tasks_vs_operators" style="border-radius: 1rem"/></p>
+  <p style="text-align: center; font-size: 0.75rem; margin-bottom: 1.5rem;">
     <b>Fonte:</b> <a target="_blank" href="https://www.amazon.com.br/Data-Pipelines-Apache-Airflow-Harenslak/dp/1617296902">Data Pipelines with Apache Airflow (2021) by Bas Harenslak and Julian de Ruiter</a>
   </p>
 
@@ -234,7 +236,10 @@ Uma `DAG Run` é uma instância de uma DAG que, por sua vez, contém instâncias
 
 > A `execution_date` é a data e hora que a `DAG Run` e as `TaskInstance` estão sendo (ou foram) executadas.
 
-![image-20210302163646235](/home/acosta/.config/Typora/typora-user-images/image-20210302163646235.png)
+<p><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/notes/assets/task_lifecycle_diagram.png" alt="tasks_lifecycle" style="text-align: center; border-radius: 1rem"/></p>
+<p style="text-align: center; font-size: 0.75rem; margin-bottom: 1.5rem;">
+  <b>Fonte:</b> <a target="_blank" href="https://airflow.apache.org/docs/apache-airflow/stable/concepts/tasks.html#task-instances">Task Instances - Apache Airflow Documentation</a>
+</p>
 
 Fazendo uma analogia com a Programação Orientada à Objetos, podemos pensar nas **DAGs** como **classes** e nas **DAG Runs** como **objetos da classe DAG** (ou seja, uma instância da classe DAG).
 
@@ -347,7 +352,7 @@ Operadores definem uma única e exclusiva tarefa em um *workflow*.
 Os operadores são geralmente (mas nem sempre) atômicos, o que significa que *podem ser autônomos e não precisam compartilhar recursos com quaisquer outros operadores*.
 
 - Se dois operadores precisam compartilhar informações entre si (e.g, nome de arquivo ou uma pequena quantidade de dados), você deve considerar combiná-los em um único operador.
-  - Se isso não for possível (ou puder ser evitado de forma alguma), o Airflow tem uma *feature*  para a comunicação cruzada entre operadores chamada **XCom** descrita na seção [XComs](https://airflow.apache.org/docs/apache-airflow/stable/concepts .html # concepts-xcom).
+  - Se isso não for possível (ou puder ser evitado de forma alguma), o Airflow tem uma *feature*  para a comunicação cruzada entre operadores chamada **XCom** descrita na seção [XComs](https://airflow.apache.org/docs/apache-airflow/stable/concepts.html#concepts-xcom).
 - Operadores **não precisam ser atribuídos as DAGs imediatamente** (anteriormente, a `dag` era um argumento obrigatório).
   - No entanto, uma vez que um operador é atribuído a um DAG, **ele não pode ser transferido ou não atribuído**
 
