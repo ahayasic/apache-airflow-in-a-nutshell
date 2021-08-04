@@ -1,9 +1,9 @@
 site_name: Apache Airflow in a Nutshell
 nav:
-  - Home: index.md
-  - Getting Started:
-    - Introduction: introduction.md
-    - Essential Concepts and Components: essential_concepts_and_components.md
+  - Início: index.md
+  - Começando:
+    - Introdução: introduction.md
+    - Conceitos e Componentes Essenciais: essential_concepts_and_components.md
 repo_url: https://github.com/ahayasic/apache-airflow-in-a-nutshell
 repo_name: ahayasic/apache-airflow-in-a-nutshell
 edit_uri: ""

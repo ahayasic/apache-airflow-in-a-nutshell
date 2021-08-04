@@ -151,7 +151,7 @@ Operadores e tasks são um conceito confuso e podem parecer a mesma coisa, mas n
 
   Tal componente é responsável por gerenciar o estado de operação dos operadores.
 
-  <p style="text-align: center;"><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/notes/assets/tasks_vs_operators.png" alt="tasks_vs_operators" style="border-radius: 1rem"/></p>
+  <p style="text-align: center;"><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/docs/assets/tasks_vs_operators.png" alt="tasks_vs_operators" style="border-radius: 1rem"/></p>
   <p style="text-align: center; font-size: 0.75rem; margin-bottom: 1.5rem;">
     <b>Fonte:</b> <a target="_blank" href="https://www.amazon.com.br/Data-Pipelines-Apache-Airflow-Harenslak/dp/1617296902">Data Pipelines with Apache Airflow (2021) by Bas Harenslak and Julian de Ruiter</a>
   </p>
@@ -236,7 +236,7 @@ Uma `DAG Run` é uma instância de uma DAG que, por sua vez, contém instâncias
 
 > A `execution_date` é a data e hora que a `DAG Run` e as `TaskInstance` estão sendo (ou foram) executadas.
 
-<p><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/notes/assets/task_lifecycle_diagram.png" alt="tasks_lifecycle" style="text-align: center; border-radius: 1rem"/></p>
+<p><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/docs/assets/task_lifecycle_diagram.png" alt="tasks_lifecycle" style="text-align: center; border-radius: 1rem"/></p>
 <p style="text-align: center; font-size: 0.75rem; margin-bottom: 1.5rem;">
   <b>Fonte:</b> <a target="_blank" href="https://airflow.apache.org/docs/apache-airflow/stable/concepts/tasks.html#task-instances">Task Instances - Apache Airflow Documentation</a>
 </p>
