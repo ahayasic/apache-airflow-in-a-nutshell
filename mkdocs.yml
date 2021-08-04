@@ -1,0 +1,65 @@
+site_name: Apache Airflow in a Nutshell
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Introduction: introduction.md
+    - Essential Concepts and Components: essential_concepts_and_components.md
+repo_url: https://github.com/ahayasic/apache-airflow-in-a-nutshell
+repo_name: ahayasic/apache-airflow-in-a-nutshell
+edit_uri: ""
+theme:
+  name: material
+  language: en
+  font:
+    text: Roboto
+    code: Roboto Mono
+    font: false
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Trocar para Modo Escuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Trocar para Modo Claro
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.superfences
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      linenums: true
+      linenums_style: pymdownx-inline
+  - pymdownx.arithmatex:
+      generic: true
+extra_javascript:
+  - javascripts/config.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+extra:
+  social:
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/ahayasic/
+    - icon: fontawesome/brands/github
+      link: https://github.com/ahayasic
+    - icon: fontawesome/solid/globe
+      link: https://ahayasic.github.io/
+copyright: Copyright &copy; 2021 Alisson Hayasi da Costa
+plugins:
+  - search
