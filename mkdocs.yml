@@ -11,8 +11,8 @@ theme:
   name: material
   language: en
   font:
-    text: Roboto
-    code: Roboto Mono
+    text: Karla
+    code: DM Mono
     font: false
   icon:
     repo: fontawesome/brands/github
@@ -48,6 +48,9 @@ markdown_extensions:
       linenums_style: pymdownx-inline
   - pymdownx.arithmatex:
       generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
 extra_javascript:
   - javascripts/config.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6

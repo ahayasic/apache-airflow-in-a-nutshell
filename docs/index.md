@@ -4,4 +4,4 @@ Este repositório contém um conjunto de arquivos markdown que explicam sobre a 
 
 O trabalho ainda está em progresso. Portanto, erros serão corrigidos e melhorias adicionadas à medida que o trabalho avançar.
 
-Caso queira contribuir com sugestões, sinta-se à vontade para abrir Issues & PRs! :D
+Caso queira contribuir com sugestões, sinta-se à vontade para abrir Issues & PRs! :grin:
