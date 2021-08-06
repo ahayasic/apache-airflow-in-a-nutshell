@@ -30,11 +30,11 @@ theme:
     # - content.tabs.link
     - navigation.instant
     - navigation.tracking
-    - navigation.sections
-    - navigation.expand
+    # - navigation.sections
+    # - navigation.expand
     - navigation.top
     # - header.autohide
-    # - navigation.indexes
+    - navigation.indexes
     # - navigation.tabs
     # - navigation.tabs.sticky
     - search.highlight
@@ -140,12 +140,12 @@ markdown_extensions:
 # Page tree
 #
 nav:
-  - Início: index.md
+  - Sobre: index.md
   - Introdução ao Apache Airflow:
     - O Que é o Apache Airflow: what_is_apache_airflow.md
     - Conceitos e Componentes Essenciais: essential_concepts_and_components.md
   - Construindo Pipelines:
-    - Escalonamento e Triggers: index.md
+    - Agendamento e Triggers: index.md
     - Tarefas e Modelos: index.md
     - Dependências entre Tarefas: index.md
     - Executando Tarefas em Containers: index.md
