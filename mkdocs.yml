@@ -1,21 +1,48 @@
+# Project Information
+#
 site_name: Apache Airflow in a Nutshell
-nav:
-  - Início: index.md
-  - Começando:
-    - Introdução: introduction.md
-    - Conceitos e Componentes Essenciais: essential_concepts_and_components.md
-repo_url: https://github.com/ahayasic/apache-airflow-in-a-nutshell
+site_url: https://ahayasic.github.io/apache-airflow-in-a-nutshell
+site_author: Alisson Hayasi da Costa
+# site_description:
+
+
+# Repository
+#
 repo_name: ahayasic/apache-airflow-in-a-nutshell
+repo_url: https://github.com/ahayasic/apache-airflow-in-a-nutshell
 edit_uri: ""
+
+
+# Copyright
+#
+copyright: Copyright &copy; 2021 Alisson Hayasi da Costa
+
+
+# Configuration
+#
 theme:
   name: material
-  language: en
-  font:
-    text: Karla
-    code: DM Mono
-    font: false
-  icon:
-    repo: fontawesome/brands/github
+  language: pt
+
+  # Features
+  features:
+    - content.code.annotate
+    # - content.tabs.link
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    # - header.autohide
+    # - navigation.indexes
+    # - navigation.tabs
+    # - navigation.tabs.sticky
+    - search.highlight
+    - search.share
+    - search.suggest
+    # - toc.integrate
+
+  # Colors
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -31,30 +58,25 @@ theme:
       toggle:
         icon: material/toggle-switch
         name: Trocar para Modo Claro
-  features:
-    - navigation.instant
-    - navigation.tracking
-    - navigation.sections
-    - navigation.expand
-    - navigation.top
-markdown_extensions:
-  - pymdownx.highlight
-  - pymdownx.inlinehilite
-  - pymdownx.keys
-  - pymdownx.superfences
-  - pymdownx.superfences
-  - pymdownx.highlight:
-      linenums: true
-      linenums_style: pymdownx-inline
-  - pymdownx.arithmatex:
-      generic: true
-  - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
-extra_javascript:
-  - javascripts/config.js
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
-  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+  # Font
+  font:
+    text: Source Sans Pro
+    code: DM Mono
+    font: false
+  # favicon:
+  icon:
+    repo: fontawesome/brands/github
+
+
+# Plugins
+#
+plugins:
+  - search
+
+
+# Extras
+#
 extra:
   social:
     - icon: fontawesome/brands/linkedin
@@ -63,6 +85,79 @@ extra:
       link: https://github.com/ahayasic
     - icon: fontawesome/solid/globe
       link: https://ahayasic.github.io/
-copyright: Copyright &copy; 2021 Alisson Hayasi da Costa
-plugins:
-  - search
+
+extra_javascript:
+  - javascripts/config.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+extra_css:
+  - stylesheets/extra.css
+
+
+# Extensions
+#
+markdown_extensions:
+  - admonition
+  - abbr
+  - attr_list
+  - def_list
+  - footnotes
+  - meta
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: squidfunk
+      repo: mkdocs-material
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid-experimental
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+
+# Page tree
+#
+nav:
+  - Início: index.md
+  - Introdução ao Apache Airflow:
+    - O Que é o Apache Airflow: what_is_apache_airflow.md
+    - Conceitos e Componentes Essenciais: essential_concepts_and_components.md
+  - Construindo Pipelines:
+    - Escalonamento e Triggers: index.md
+    - Tarefas e Modelos: index.md
+    - Dependências entre Tarefas: index.md
+    - Executando Tarefas em Containers: index.md
+    - Testando DAGs: index.md
+  - Indo Além:
+    - Comunicando com Sistemas Externos: index.md
+    - Criando Componentes Personalizados: index.md
+  - Boas Práticas & Receitas:
+    - Boas Práticas: index.md
+    - Receitas & Códigos Padrões: index.md
+  - Operando e Administrando Apache Airflow:
+    - Administrando o Airflow: index.md
+    - Executando o Aiflow Localmente: index.md
+    - Executando o Airflow na Nuvem: index.md
+  - Estudos de Caso: index.md

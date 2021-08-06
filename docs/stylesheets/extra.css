@@ -1,0 +1,9 @@
+.md-grid {
+    max-width: 75rem;
+}
+
+.md-content {
+    margin-left: 5rem;
+    margin-right: 5rem;
+    text-align: justify;
+}
