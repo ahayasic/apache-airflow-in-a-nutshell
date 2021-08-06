@@ -106,22 +106,25 @@ download_launches >> get_pictures >> notify
 
 No Airflow, utilizamos o operador binário *"rshift"* (`>>`) para definirmos as dependências entre as tarefas. Assim, a tarefa `get_pictures` só acontecerá após `download_launches`. Afinal, só podemos filtrar as imagens após as coletarmos!
 
-> Outro termo comum para o relacionamento entre tasks é `upstream` e `downstream`.
->
-> - `upstream`. Tarefa que é dependência de outra. Por exemplo, `download_launches` é `upstream` de `get_pictures`.
-> - `downstream`. A tarefa dependente. Por exemplo, `get_pictures` é `downstream` de `download_launches`.
+!!! info "Info"
+    Outro termo comum para o relacionamento entre tasks é `upstream` e `downstream`.
+
+    - `upstream`. Tarefa que é dependência de outra. Por exemplo, `download_launches` é `upstream` de `get_pictures`.
+    - `downstream`. A tarefa dependente. Por exemplo, `get_pictures` é `downstream` de `download_launches`.
 
 O `BashOperator` também possui diversos parâmetros.
 
 - `task_id` (obrigatório). Identificador da task.
-
-  > De fato, o argumento `task_id` é um campo obrigatório em todos os operadores.
-
 - `bash_command` (obrigatório). Comando Bash a ser executado.
 
 Na linha `dag=dag`, estamos atrelando a tarefa definida à DAG desejada.
 
-> Na verdade, existem diversas formas de fazermos isso, por exemplo, podemos abstrair esse trecho (`dag=dag`) em particular, se criarmos uma DAG como uma Gerenciadora de Contexto.
+!!! note "Nota"
+    O argumento `task_id` é um campo obrigatório em todos os operadores.
+
+
+!!! tip "Dica"
+    Na verdade, existem diversas formas de fazermos isso, por exemplo, podemos abstrair esse trecho (`dag=dag`) em particular, se criarmos uma DAG como uma Gerenciadora de Contexto.
 
 Já no seguinte trecho:
 
@@ -140,21 +143,20 @@ Estamos utilizando o operador `PythonOperator` $-$ cuja responsabilidade é exec
 Operadores e tasks são um conceito confuso e podem parecer a mesma coisa, mas não são!
 
 - **Operadores.** Componentes especializados em executar um único e específico trabalho dentro do workflow. Por exemplo, temos:
+    - `BashOperator`. Responsável por executar um comando ou script Bash.
+    - `PythonOperator`. Responsável por executar uma função Python.
+    - `SimpleHTTPOperator.` Responsável por fazer uma chamada HTTP à um endpoint.
 
-  - `BashOperator`. Responsável por executar um comando ou script Bash.
-  - `PythonOperator`. Responsável por executar uma função Python.
-  - `SimpleHTTPOperator.` Responsável por fazer uma chamada HTTP à um endpoint.
-
-  De certa forma, podemos pensar que uma DAG simplesmente orquestra a execução de uma coleção de operadores. Ainda, como são os operadores que, conceitualmente, executam as tarefas em si, acabamos usando ambos os termos de forma intercambiável.
+    De certa forma, podemos pensar que uma DAG simplesmente orquestra a execução de uma coleção de operadores. Ainda, como são os operadores que, conceitualmente, executam as tarefas em si, acabamos usando ambos os termos de forma intercambiável.
 
 - **Tasks.** Componentes que podem ser vistos como "gerenciadores" de operadores. De fato, embora do ponto de vista do usuário tarefas e operadores sejam equivalente, no Airflow ainda temos o componente `task`.
 
-  Tal componente é responsável por gerenciar o estado de operação dos operadores.
+    Tal componente é responsável por gerenciar o estado de operação dos operadores.
 
-  <p style="text-align: center;"><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/docs/assets/tasks_vs_operators.png" alt="tasks_vs_operators" style="border-radius: 1rem"/></p>
-  <p style="text-align: center; font-size: 0.75rem; margin-bottom: 1.5rem;">
-    <b>Fonte:</b> <a target="_blank" href="https://www.amazon.com.br/Data-Pipelines-Apache-Airflow-Harenslak/dp/1617296902">Data Pipelines with Apache Airflow (2021) by Bas Harenslak and Julian de Ruiter</a>
-  </p>
+    <p style="text-align: center;"><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/docs/assets/tasks_vs_operators.png"     alt="tasks_vs_operators" style="border-radius: 1rem"/></p>
+    <p style="text-align: center; font-size: 0.75rem; margin-bottom: 1.5rem;">
+      <b>Fonte:</b> <a target="_blank" href="https://www.amazon.com.br/Data-Pipelines-Apache-Airflow-Harenslak/dp/1617296902">Data Pipelines with Apache Airflow (2021) by Bas    Harenslak and Julian de Ruiter</a>
+    </p>
 
 ### Triggando a DAG Manualmente
 
@@ -208,16 +210,16 @@ DAGs são:
 Os parâmetros mais importantes na declaração de uma DAG são:
 
 - `dag_id`. Identificador do DAG.
-
 - `start_date`. *Timestamp* a partir do qual o _scheduler_ deve escalonar a DAG
 
-  > Ou seja, o parâmetro `start_date` é responsável por definir a data à partir da qual a DAG está disponível para execução.
+!!! info "Info"
+    Ou seja, o parâmetro `start_date` é responsável por definir a data à partir da qual a DAG está disponível para execução.
 
 - `schedule_interval`. Intervalo de execução da DAG.
-
 - `default_args`. Dicionário com parâmetros padrões que devem ser passados à todas as tasks
 
-  > Portanto, quando todos os operadores possuírem um conjunto de parâmetros em comum, o uso do `defaults_args` é a forma mais inteligente de evitar duplicidade de código.
+!!! tip "Dica"
+    Quando todos os operadores possuírem um conjunto de parâmetros em comum, o uso do `defaults_args` é a forma mais inteligente de evitar duplicidade de código.
 
 Outros parâmetros interessantes de se ter conhecimento são:
 
@@ -226,7 +228,8 @@ Outros parâmetros interessantes de se ter conhecimento são:
 - `on_failure_callback`. Uma função a ser chamada quando a DAG (mais precisamente, a `DAG Run` referente à DAG) falhar.
 - `on_success_callback`. Mesmo comportamento do parâmetro `on_falilure_callback`, porém quando a DAG roda com sucesso.
 
->  *Note que o Airflow carregará apenas objetos `DAG` globais!*
+!!! attention "Atenção!"
+    Note que o Airflow carregará apenas objetos `DAG` globais!
 
 No Airflow 2.x, através da *decorator* DAG é possível gerar DAGs através de funções. Assim, qualquer função decorada com `@dag` retorna um objeto DAG.
 
@@ -273,27 +276,22 @@ default_args = {
 Os parâmetros mais importantes de serem compartilhados entre as tarefas são:
 
 - `owner`. Administrador da tarefa (ou *task*).
-
 - `depends_on_past`. Define se as *tasks* da DAG dependem do sucesso de *tasks* anteriores para execução.
-
 - `retries`. Quantidade de vezes que uma *task* deve tentar ser reexecutada, se falhar.
-
 - `retry_delay`. Tempo de espera até uma próxima tentativa de re-execução.
-
 - `on_failure_callback`. Uma função a ser chamada quando a tarefa (mais precisamente, a `TaskInstance` referente à *task*) falhar.
 
-  > No caso, um Dicionário de Contexto é passado como um único parâmetro para esta função. O contexto contém referências a objetos relacionados à instância da tarefa e está documentado na seção de macros da API.
+    !!! note "Nota"
+        No caso, um Dicionário de Contexto é passado como um único parâmetro para esta função. O contexto contém referências a objetos relacionados à instância da tarefa e está    documentado na seção de macros da API.
 
 - `on_sucess_callback`. Mesmo comportamento do parâmetro `on_falilure_callback`, porém executado  quando a *task* DAG roda com sucesso.
-
 - `on_retry_callback` Mesmo comportamento do parâmetro `on_falilure_callback`, porém executado .quando ocorre uma tentativa de re-execução da tarefa.
-
 - `trigger_rule`. Define a regra pela qual as dependências são aplicadas para que a tarefa seja acionada. As opções são:
+    - `{ all_success | all_failed | all_done | one_success | one_failed | none_failed | none_failed_or_skipped | none_skipped | dummy}`
+    - Padrão é `all_success`.
 
-  - `{ all_success | all_failed | all_done | one_success | one_failed | none_failed | none_failed_or_skipped | none_skipped | dummy}`
-  - Padrão é `all_success`. 
-
-  > As opções podem ser definidas como *string* ou usando as constantes definidas na classe estática `airflow.utils.TriggerRule`
+    !!! tip "Dica"
+        As opções podem ser definidas como *string* ou usando as constantes definidas na classe estática `airflow.utils.TriggerRule`
 
 Outros parâmetros interessantes de se ter conhecimento são:
 
@@ -320,11 +318,10 @@ with DAG('my_dag', start_date=datetime(2016, 1, 1)) as dag:
     task_1 >> task_2 # Define dependencies
 ```
 
-Assim,
+Assim, a `task_1` começará a ser executado enquanto a `task_2` espera que `task_1` seja concluída com sucesso para então iniciar.
 
-- `task_1` começará a ser executado enquanto a `task_2` espera que `task_1` seja concluída com sucesso para então iniciar.
-
-  > Podemos dizer que `task_1` está à *upstream* da `task_2` e, inversamente, `task_2` está à downstream da `task_1`.
+!!! note ""
+    Podemos dizer que `task_1` está à *upstream* da `task_2` e, inversamente, `task_2` está à downstream da `task_1`.
 
 ### Task Instances
 
