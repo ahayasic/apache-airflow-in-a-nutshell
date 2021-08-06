@@ -122,8 +122,8 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.magiclink:
       repo_url_shorthand: true
-      user: squidfunk
-      repo: mkdocs-material
+      user: ahayasic
+      repo: apache-airflow-in-a-nutshell
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.superfences:
