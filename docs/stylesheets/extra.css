@@ -10,3 +10,28 @@
     }
 }
 
+.post__img_legend {
+    text-align: center;
+    font-size: 0.7rem;
+    margin-bottom: 1rem;
+}
+
+.md-typeset h1 {
+    margin: 0 0 -0.5rem;
+}
+
+.md-typeset h2 {
+    margin: 1.6rem 0 -0.5rem;
+}
+
+.md-typeset h3 {
+    margin: 1.4rem 0 -0.5rem;
+}
+
+.md-typeset .admonition, .md-typeset details {
+    font-size: 0.75rem;
+}
+
+.md-typeset .footnote {
+    font-size: 0.75rem;
+}
