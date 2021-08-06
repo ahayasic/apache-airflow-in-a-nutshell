@@ -140,24 +140,26 @@ markdown_extensions:
 # Page tree
 #
 nav:
-  - Sobre: index.md
+  - Início: index.md
+  - Sobre o Autor: about.md
   - Introdução ao Apache Airflow:
-    - O Que é o Apache Airflow: what_is_apache_airflow.md
-    - Conceitos e Componentes Essenciais: essential_concepts_and_components.md
+    - Introdução: content/introduction_to_apache_airflow/introduction_to_apache_airflow.md
+    - Conceitos e Componentes Essenciais: content/introduction_to_apache_airflow/essential_concepts_and_components.md
   - Construindo Pipelines:
-    - Agendamento e Triggers: index.md
-    - Tarefas e Modelos: index.md
-    - Dependências entre Tarefas: index.md
-    - Executando Tarefas em Containers: index.md
-    - Testando DAGs: index.md
+    - Agendamento e Triggers: content/building_pipelines/scheduling_and_triggers.md
+    - Tarefas e Modelos: content/building_pipelines/templating_tasks.md
+    - Dependências entre Tarefas: content/building_pipelines/dependencies_between_tasks.md
+    - Executando Tarefas em Containers: content/building_pipelines/running_tasks_in_containers.md
+    - Testando DAGs: content/building_pipelines/testing_dags.md
   - Indo Além:
-    - Comunicando com Sistemas Externos: index.md
-    - Criando Componentes Personalizados: index.md
+    - Comunicando com Sistemas Externos: content/going_deeper/communicating_external_systems.md
+    - Criando Componentes Personalizados: content/going_deeper/creating_custom_components.md
   - Boas Práticas & Receitas:
-    - Boas Práticas: index.md
-    - Receitas & Códigos Padrões: index.md
+    - Boas Práticas: content/best_practices/best_practices.md
+    - Receitas & Códigos Padrões: content/best_practices/recipes.md
   - Operando e Administrando Apache Airflow:
-    - Administrando o Airflow: index.md
-    - Executando o Aiflow Localmente: index.md
-    - Executando o Airflow na Nuvem: index.md
-  - Estudos de Caso: index.md
+    - Administrando o Airflow: content/admin_ops/operating_airflow.md
+    - Executando o Aiflow Localmente: content/admin_ops/running_airflow_locally.md
+    - Executando o Airflow na Nuvem: content/admin_ops/running_airflow_in_the_clouds.md
+  # - Estudos de Caso:  # TODO
+  # - Referências:  # Not necessary
