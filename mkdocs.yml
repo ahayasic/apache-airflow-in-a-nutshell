@@ -22,25 +22,26 @@ copyright: Copyright &copy; 2021 Alisson Hayasi da Costa
 #
 theme:
   name: material
+  custom_dir: docs/overrides
   language: pt
 
   # Features
   features:
-    - content.code.annotate
-    # - content.tabs.link
-    - navigation.instant
-    - navigation.tracking
-    # - navigation.sections
-    # - navigation.expand
-    - navigation.top
-    # - header.autohide
-    - navigation.indexes
-    # - navigation.tabs
-    # - navigation.tabs.sticky
-    - search.highlight
-    - search.share
-    - search.suggest
-    # - toc.integrate
+    - content.code.annotate       # allow add simple markers within block/inline comments
+    # - content.tabs.link         # make content tabs on a page be linked
+    - navigation.instant          # instant reloading
+    - navigation.tracking         # url in the address bar automatically updated with the active anchor
+    # - navigation.sections       # top-level sections rendered as groups
+    # - navigation.expand         # feft sidebar expand all collapsible subsections by default
+    - navigation.top              # back-to-top button
+    # - header.autohide           # header automatically hidden
+    - navigation.indexes          # documents can be directly attached to sections (not working properly!)
+    # - navigation.tabs           # top-level sections rendered in menu
+    # - navigation.tabs.sticky    # lock sections in menu
+    - search.highlight            # highlight all occurrences of word searched
+    # - search.share              # shareble link to current query search
+    - search.suggest              # search display the likeliest completion for the last word
+    # - toc.integrate             # toc rendered as part of the navigation
 
   # Colors
   palette:
@@ -73,6 +74,13 @@ theme:
 #
 plugins:
   - search
+  - git-revision-date-localized:
+      type: iso_date
+      fallback_to_build_date: true
+      enable_creation_date: true
+      exclude:
+        - index.md
+        - about.md
 
 
 # Extras
@@ -98,43 +106,77 @@ extra_css:
 # Extensions
 #
 markdown_extensions:
-  - admonition
-  - abbr
-  - attr_list
-  - def_list
-  - footnotes
-  - meta
-  - md_in_html
-  - toc:
-      permalink: true
-  - pymdownx.arithmatex:
-      generic: true
-  - pymdownx.betterem:
-      smart_enable: all
-  - pymdownx.caret
-  - pymdownx.critic
-  - pymdownx.details
+  # Abbreviations
+  - abbr                                                                  # additional content to parts of the text which are then shown on hover
+
+  # Admonitions
+  - admonition                                                            # call-outs
+  - pymdownx.details                                                      # adds the ability to make admonitions collapsible
+
+  # HTML & CSS
+  - attr_list                                                             # add HTML attributes and CSS classes to Markdown elements
+
+  # Code blocks
+  - pymdownx.highlight:                                                   # code block highlights
+      linenums: true
+      linenums_style: pymdownx-inline
+  - pymdownx.inlinehilite                                                 # inline code highlights
+  - pymdownx.keys                                                         # allows for inserting keyboard keys
+
+  # Content Tabs
+  - pymdownx.tabbed                                                       # allows group alternative content under different tabs
+
+  # Footnotes
+  - footnotes                                                             # add the ability to add inline footnotes
+
+  # Text formatting
+  - pymdownx.caret                                                        # allow for the highlighting of text, as well as handling sub- and superscripts
+  - pymdownx.mark                                                         #
+  - pymdownx.tilde                                                        #
+  - pymdownx.critic                                                       # allow for the usage of Critic Markup to highlight changes
+  - pymdownx.smartsymbols                                                 # converts special characters into their corresponding symbols
+
+  # Emojis
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
-  - pymdownx.highlight
-  - pymdownx.inlinehilite
-  - pymdownx.keys
+
+  # Lists                                                                 # add support to several flavors of lists
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+  # MathJax
+  - pymdownx.arithmatex:
+      generic: true
+
+  # Meta tags
+  - meta                                                                  # adds the ability to add front matter to a document
+
+  # Macros                                                                # add jinja templating support
+  # - macros
+
+  # Magic Links                                                           # add ability to link repositories
   - pymdownx.magiclink:
       repo_url_shorthand: true
       user: ahayasic
       repo: apache-airflow-in-a-nutshell
-  - pymdownx.mark
-  - pymdownx.smartsymbols
-  - pymdownx.superfences:
+
+  # Utils
+  - toc:
+      permalink: true
+      toc_depth: 4
+  - pymdownx.snippets                                                     # insert content from other files
+  - pymdownx.superfences:                                                 # allows for the nesting of code and content blocks inside admonitions and blocks
       custom_fences:
         - name: mermaid
           class: mermaid-experimental
           format: !!python/name:pymdownx.superfences.fence_code_format
-  - pymdownx.tabbed
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - pymdownx.tilde
+
+  # Others
+  - md_in_html                                                            # parses Markdown inside of HTML tags.
+  - pymdownx.betterem:
+      smart_enable: all
 
 
 # Page tree
