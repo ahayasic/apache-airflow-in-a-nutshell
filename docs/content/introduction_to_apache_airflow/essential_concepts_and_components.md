@@ -1,4 +1,7 @@
 # Apache Airflow Conceitos & Componentes
+O Apache Airflow é uma ferramenta rica em recursos e funcionalidades. Porém, como toda ferramenta, o Airflow possui um conjunto de conceitos e componentes fundamentais a partir do qual toda a ferramenta gira em torno.
+
+Para explicarmos melhor sobre, vamos recorrer a um exemplo.
 
 ## DAG de Exemplo
 
@@ -80,8 +83,8 @@ Nesta fase, estamos criando um objeto do tipo `DAG`. Este objeto é o ponto de p
 
 Uma DAG tem vários parâmetros, no nosso caso:
 
-- `dag_id` (obrigatório). Identificador da DAG. Deve ser um nome único, sem caracteres especiais (com exceção de *underscores*)
-- `start_date` (obrigatório). Data a partir do qual a DAG pode ser executada.
+- `dag_id` **[obrigatório]**. Identificador da DAG. Deve ser um nome único, sem caracteres especiais (com exceção de *underscores*)
+- `start_date` **[obrigatório]**. Data a partir do qual a DAG pode ser executada.
 - `schedule_interval`. Intervalo de execução da DAG. Ao atribuirmos `None`, estamos definindo que a DAG em questão só será executada quando a triggarmos manualmente.
 
 Em seguida, definimos nossa primeira tarefa.
@@ -96,7 +99,7 @@ download_launches = BashOperator(
 
 No caso, declaramos um `BashOperator` cuja responsabilidade é executar um *comando Bash*.
 
-Os operadores são os caras responsáveis por executar as tarefas em uma DAG e são independentes entre si. Contudo, ainda podemos definir um fluxo de execução das tarefas $-$ chamamos isso de *dependências*. 
+Os operadores são os "caras" responsáveis por executar as tarefas em uma DAG e são independentes entre si. Contudo, ainda podemos definir um fluxo de execução das tarefas $-$ chamamos isso de *dependências*.
 
 Em nosso código, definimos as dependências no seguinte trecho:
 
@@ -106,7 +109,7 @@ download_launches >> get_pictures >> notify
 
 No Airflow, utilizamos o operador binário *"rshift"* (`>>`) para definirmos as dependências entre as tarefas. Assim, a tarefa `get_pictures` só acontecerá após `download_launches`. Afinal, só podemos filtrar as imagens após as coletarmos!
 
-!!! info "Info"
+!!! note "Nota"
     Outro termo comum para o relacionamento entre tasks é `upstream` e `downstream`.
 
     - `upstream`. Tarefa que é dependência de outra. Por exemplo, `download_launches` é `upstream` de `get_pictures`.
@@ -174,15 +177,15 @@ Caso o interpretador não encontre qualquer problema de importação ou sintaxe,
 
 É muito comum $-$ principalmente durante a etapa de desenvolvimento $-$ algumas tarefas falharem. Os motivos da falha podem ser diversos, desde erros de sintaxe até questões mais complexas como problemas de conectividade.
 
-A primeira ação a ser tomada neste caso é consultar os *logs* da tarefa que falhou para identificarmos os motivos. 
+A primeira ação a ser tomada neste caso é consultar os *logs* da tarefa que falhou para identificarmos os motivos.
 
-Uma vez que os motivos são identificados e os problemas corrigidos, podemos retriggar a DAG a partir da tarefa que falhou! Desse modo, não é necessário reexecutarmos tarefas posteriores que foram bem-sucedidas. Basta acessarmos a **tarefa que falhou** através da UI e acionarmos a opção `[Clear]`. Com isso, o Airflow irá resetar o estado atual da tarefa para um estado "escalonável" e reexecutá-la.
+Uma vez que os motivos são identificados e os problemas corrigidos, podemos retriggar a DAG a partir da tarefa que falhou! Desse modo, não é necessário reexecutarmos tarefas posteriores que foram bem-sucedidas. Basta acessarmos a **tarefa que falhou** através da UI e acionarmos o botão ++"Clear"++. Com isso, o Airflow irá resetar o estado atual da tarefa para um estado "escalonável" e então reexecutá-la.
 
 ### Definindo Intervalos de Execução Regulares
 
 Como visto anteriormente, o Airflow nos fornece um argumento `schedule_interval` onde podemos especificar o intervalo de execução da DAG.
 
-Ao atribuirmos `None`, dizemos ao Airflow que a DAG não possui qualquer intervalo de execução e, portanto, ela só será executada quando a triggarmos manualmente. 
+Ao atribuirmos `None`, dizemos ao Airflow que a DAG não possui qualquer intervalo de execução e, portanto, ela só será executada quando a triggarmos manualmente.
 
 Alternativamente, podemos utilizar a mesma sintaxe da ferramenta *Cronjob* para definirmos intervalos de execução. Por exemplo, ao atribuirmos `@daily` ao argumento `schedule_interval`, estamos dizendo ao Airflow que a DAG em questão deve ser executada diariamente (por padrão, o Airflow irá executá-la às 00hrs).
 
@@ -210,11 +213,7 @@ DAGs são:
 Os parâmetros mais importantes na declaração de uma DAG são:
 
 - `dag_id`. Identificador do DAG.
-- `start_date`. *Timestamp* a partir do qual o _scheduler_ deve escalonar a DAG
-
-!!! info "Info"
-    Ou seja, o parâmetro `start_date` é responsável por definir a data à partir da qual a DAG está disponível para execução.
-
+- `start_date`. *Timestamp* a partir do qual o _scheduler_ deve escalonar a DAG. Em outras palavras, é o parâmetro responsável por definir a data à partir da qual a DAG está disponível para execução.
 - `schedule_interval`. Intervalo de execução da DAG.
 - `default_args`. Dicionário com parâmetros padrões que devem ser passados à todas as tasks
 
@@ -237,12 +236,8 @@ No Airflow 2.x, através da *decorator* DAG é possível gerar DAGs através de 
 
 Uma `DAG Run` é uma instância de uma DAG que, por sua vez, contém instâncias das tarefas que são executadas para uma `execution_date` específica.
 
-> A `execution_date` é a data e hora que a `DAG Run` e as `TaskInstance` estão sendo (ou foram) executadas.
-
-<p><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/docs/assets/task_lifecycle_diagram.png" alt="tasks_lifecycle" style="text-align: center; border-radius: 1rem"/></p>
-<p style="text-align: center; font-size: 0.75rem; margin-bottom: 1.5rem;">
-  <b>Fonte:</b> <a target="_blank" href="https://airflow.apache.org/docs/apache-airflow/stable/concepts/tasks.html#task-instances">Task Instances - Apache Airflow Documentation</a>
-</p>
+!!! note "Nota"
+    A `execution_date` é a data e hora que a `DAG Run` e as `TaskInstance` estão sendo (ou foram) executadas.
 
 Fazendo uma analogia com a Programação Orientada à Objetos, podemos pensar nas **DAGs** como **classes** e nas **DAG Runs** como **objetos da classe DAG** (ou seja, uma instância da classe DAG).
 
@@ -341,6 +336,11 @@ Os possíveis estados são:
 - `up_for_reeschedule`.  A task é um **Sensor** (mais informações em documentos mais avançados) e está no modo `scheduled`.
 - `sensing`. A task é um **Smart Sensor** (mais informações em documentos mais avançados).
 - `removed`. A task foi removida da DAG desde sua última execução.
+
+<p><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/docs/assets/task_lifecycle_diagram.png" alt="tasks_lifecycle" style="text-align: center; border-radius: 1rem"/></p>
+<p style="text-align: center; font-size: 0.75rem; margin-bottom: 1.5rem;">
+  <b>Fonte:</b> <a target="_blank" href="https://airflow.apache.org/docs/apache-airflow/stable/concepts/tasks.html#task-instances">Task Instances - Apache Airflow Documentation</a>
+</p>
 
 ### Operadores
 
