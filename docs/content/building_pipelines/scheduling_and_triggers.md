@@ -1,19 +1,19 @@
 # Agendamento e Sensores
-O Airflow nos fornece diversas maneiras de disparar a execução de uma DAG. Contudo, há duas formas que são as mais comuns e fundamentais.
 
-- Argumentos obrigatórios de agendamento (durante a inicialização da DAG)
-- Sensores, um tipo especial de operador responsável por disparar uma DAG assim que uma condição especial for cumprida.
+Para que as DAGs sejam executáveis, elas precisam de:
+
+- Uma data de início a partir do qual podem ser executadas.
+- Uma política de disparo que pode ser (além do disparo manual): um intervalo de execução e/ou um critério condicional.
+
+Essas configurações são definidas durante a inicialização (i.e. criação do objeto) da DAG.
 
 ## Configurando o Agendamento de DAGs
-O agendamento de DAGs (ou seja, momento a partir de quando as DAGs devem ser executadas) no Airflow é configurado através de três argumentos: `start_date`, `schedule_interval` e `end_date`. Todos estes argumentos são atribuidos durante a inicialização da DAG.
 
+Chamamos de agendamento (ou escalonamento) o procedimento executado pelo Airflow de definir quando uma DAG deve ser executada. O agendamento é configurado através de três parâmetros principais: `start_date`, `schedule_interval` e `end_date`. Todos estes parâmetros são atribuidos durante a inicialização da DAG.
 
-- **`start_date` [obrigatório]**. Define a partir de qual momento a DAG em questão está disponível para ser executada.
-
-    Note que o argumento `start_date` é obrigatório na inicialização pois sem uma data de início é impossível para o Airflow saber se a DAG pode ou não ser executada.
-
-- **`schedule_interval`**. Define o intervalo de execução da DAG. Por padrão, o valor de `schedule_interval` é `None`, o que significa que a DAG em questão só será executada quando triggada manualmente.
-- **`end_date`**. Momento até onde a DAG é possível de ser executada.
+- **`start_date` [obrigatório]**. Momento a partir do qual a DAG em questão estará disponível para ser executada. Note que o argumento `start_date` é obrigatório durante a inicialização pois sem uma data de início é impossível para o Airflow saber se a DAG pode ou não ser executada.
+- **`schedule_interval`**. Intervalo de execução da DAG. Por padrão, o valor de `schedule_interval` é `None`, o que significa que a DAG em questão só será executada quando triggada manualmente.
+- **`end_date`**. Momento até onde a DAG deve ser executada.
 
 !!! example "Exemplo"
     ```python
@@ -25,9 +25,11 @@ O agendamento de DAGs (ou seja, momento a partir de quando as DAGs devem ser exe
     )
     ```
 
-Uma vez definida a DAG, o Airflow irá agendar sua primeira execução para o primeiro intervalo a partir a data de início. Em outras palavras, se definirmos que uma DAG está disponível para ser executada a partir do dia **09 de Agosto de 2021** às **00hrs** e com **intervalo de execução de 15 minutos**, a primeira execução será agendada para 00:15, a segunda execução será agendada para 00:30 e assim sucessivamente.
+Uma vez definida a DAG, o Airflow irá agendar sua primeira execução para o primeiro intervalo a partir a data de início. Mais precisamente:
 
-Se não definirmos uma data final, o Airflow irá agendar e executar a DAG em questão $-$ de acordo com os critérios definidos $-$ eternamente. Assim, caso exista uma data final definitiva a partir do qual a DAG não deverá ser executada, podemos utilizar o argumento `end_date` da mesma forma que `start_date` para limitar os agendamentos.
+- Se definirmos que uma DAG está disponível para ser executada a partir do dia **09 de Agosto de 2021** às **00hrs** e com **intervalo de execução de 15 minutos**, a primeira execução será agendada para 00:15, a segunda execução será agendada para 00:30 e assim sucessivamente.
+
+Se não definirmos uma data final, o Airflow irá agendar e executar a DAG em questão eternamente. Assim, caso exista uma data final definitiva a partir do qual a DAG não deverá ser executada, podemos utilizar o argumento `end_date` da mesma forma que `start_date` para limitar os agendamentos.
 
 !!! example "Exemplo"
     ```python
@@ -39,7 +41,7 @@ Se não definirmos uma data final, o Airflow irá agendar e executar a DAG em qu
     )
     ```
 
-## Intervalos Baseados em Cron
+### Intervalos Baseados em Cron
 
 Podemos definir intervalos de execução complexos usando a mesma sintaxe que usamos no [cron](https://cron-job.org/en/).
 
@@ -82,7 +84,7 @@ O Airflow também fornece alguns macros que podemos utilizar com mais facilidade
 | `@daily`  | Executa todos os dias às 00hrs |
 | `@weekly` | Executa todo domingo às 00hrs  |
 
-## Intervalos Baseados em Frequência
+### Intervalos Baseados em Frequência
 
 Embora poderosas, expressões cron são incapazes de representar agendamentos baseados em frequência. Por exemplo, não é possível definir (de forma adequada) um intervalo de "três em três em dias".
 
@@ -122,6 +124,26 @@ Embora o *backfilling* possa ser indesejado em algumas situações, seu uso é m
 
 Por exemplo, suponha as seguintes tarefas `download_data >> process_data`. Considerando que os dados adquiridos através da tarefa `download_data` ainda estejam presentes **localmente**, podemos realizar as alterações desejadas em `process_data` e então limparmos as execuções passadas (através do botão ++"Clear"++) para que assim o Airflow reagende e execute a nova implementação de `process_data`.
 
-## Processando Dados Incrementalmente
+!!! warning "Atenção"
+    A reexecução das DAGs não ocorre de forma ordenada (i.e. de acordo com a data de execução), mas sim de forma paralela.
 
-!!! note "TODO"
+    Para que o *backfilling* ocorra de forma ordenada, é necessário que o argumento `depends_on_past` presente na inicialização das tarefas seja `True`.
+
+    Detalhes sobre o argumento serão apresentados a diante.
+
+### Datas de execução de uma DAG
+
+Em diversas situações é útil sabermos as datas de execução de uma DAG. Por conta disso, o Airflow nos permite acessar $-$ através do contexto da DAG $-$ tanto a data da execução corrente da DAG, quanto a data da execução imediatamente anterior e imediatamente posterior.
+
+- `execution_date.` Data da execução corrente de DAG. Contudo, diferente do que o nome sugere, a data de execução marcada na DAG não é a data em que ela foi executada, mas sim no momento em que ela deveria ser executada, com base no intervalo de execução. Por exemplo:
+
+    - Suponha que temos uma DAG configurada para executar diariamente a partir do dia 2020-01-01. Após dez dias de execução, fizemos algumas alterações de implementação e agora precisamos que as execuções dos últimos dez dias sejam refeitas. Neste caso, ao acionarmos a opção ++"Clear"++, as datas de execução da DAG permanecerão de acordo com a data em que foram agendadas.
+
+        Agora, se triggarmos manualmente a DAG antes da próxima execução agendada, a `execution_date` será o momento em que a DAG foi de fato disparada.
+
+- `previous_execution_date`. Data de execução (`execution_date`) anterior da DAG.
+- `next_execution_date`. Data de execução (`execution_date`) agendada da DAG.
+
+## Sensores
+
+## Triggando outras DAGs
