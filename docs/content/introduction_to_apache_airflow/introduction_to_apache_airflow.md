@@ -1,12 +1,19 @@
-# Introduction to Apache Airflow
+# Introdução ao Apache Airflow
 
-## Introduction to Pipeline
+O Apache Airflow é uma plataforma para projetar, construir e monitorar fluxos de trabalho (ou *workflows*) através de scripts Python.
 
-## Apache Airflow for Pipeline
+O Airflow possui quatro características principais:
 
-### When to use Airflow
+- **Dinâmico.** Os pipelines (sinônimo para *workflows*) no Airflow são como configurações definidas em código. Com isso, é possível criar pipelines dinâmicos e adaptativos de maneira simplificada.
+- **Extensível.** O Airflow permite ao usuário definir os próprios componentes e/ou estender componentes já existem para alcançar as funcionalidades desejadas.
+- **Elegante.** Os pipelines no Airflow possuem uma declaração limpa e explícita.
+- **Escalável.** O Airflow possui uma arquitetura modular e usa mensageiros para orquestrar um número indefinido de *workers*, possibilitando uma grande escalabilidade tanto vertical quanto horinzotal.
 
-## Apache Airflow Architecture
+Ainda, essas características são mais do que características. Na verdade, são princípios que guiam tanto as funcionalidades quanto o desenvolvimento do Aiflow em si.
+
+Por fim, é importante ressaltar que o Airflow não é uma solução de streaming de dados, como é o caso de Spark Streaming ou Storm! O Airflow é uma ferramenta para a orquestração de tarefas na forma de DAGs e, portanto, deve ser utilizado para tal.
+
+## Arquitetura do Apache Airflow
 
 O Airflow é composto arquiteturalmente por 4 componentes:
 
@@ -47,11 +54,14 @@ Essencialmente, a partir do momento em que o **scheduler** é iniciado:
 
 A Figura abaixo ilustra o processo especificado.
 
-![img](https://assets2.astronomer.io/main/guides/airflow_component_relationship_fixed.png)
-_**Fonte.** astronomer.io
+<p style="text-align: center;"><img src="https://assets2.astronomer.io/main/guides/airflow_component_relationship_fixed.png" alt="airflow_component_relationship_fixed"style="border-radius: 1rem"/></p>
+<p class="post__img_legend">
+  <b>Fonte:</b> <a target="_blank" href="https://www.amazon.com.br/Data-Pipelines-Apache-Airflow-Harenslak/dp1617296902">Data Pipelines with Apache Airflow (2021) by Bas Harenslak and Julian de Ruiter</a>
+</p>
 
-  [^1]: TODO
-  [^2]: TODO
+
+  [^1]: DAG Runs são instancias de uma DAG. É um conceito importante no Airflow e é abordado com mais detalhes na seção [Apache Airflow Conceitos & Componentes](apache-airflow-in-a-nutshell/content/introduction_to_apache_airflow/essential_concepts_and_components/)
+  [^2]: `TaskInstances` são instancias de tarefas atreladas a uma DAG. Assim como as DAG Runs, também são um conceito importante no Airflow e, portanto, abordadas com mais detalhes na seção [Apache Airflow Conceitos & Componentes](apache-airflow-in-a-nutshell/content/introduction_to_apache_airflow/essential_concepts_and_components/).
 
 ## Controle de Interações Entre os Componente
 
@@ -85,3 +95,9 @@ Através dos parâmetros `parallelism`, `dag_concurrency` e `max_active_runs_per
     !!! note "Nota"
         Esse número deve depender de quanto tempo as DAGs levam para executar, seu intervalo de escalonamento e desempenho do **scheduler**.
 
+
+## Referências
+
+- [Data Pipelines with Apache Airflow (2021) by Bas Harenslak and Julian de Ruiter](https://www.amazon.com.br/Data-Pipelines-Apache-Airflow-Harenslak/dp/1617296902)
+- [Airflow Guides by Astronomer](https://www.astronomer.io/guides/)
+- [Concepts $-$ Apache Airflow Documentation](https://airflow.apache.org/docs/apache-airflow/stable/concepts/index.html)

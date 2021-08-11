@@ -1,5 +1,5 @@
 # Apache Airflow Conceitos & Componentes
-O Apache Airflow é uma ferramenta rica em recursos e funcionalidades. Porém, como toda ferramenta, o Airflow possui um conjunto de conceitos e componentes fundamentais a partir do qual toda a ferramenta gira em torno.
+O Airflow é uma ferramenta rica em recursos e funcionalidades. Porém, como toda ferramenta, o Airflow possui um conjunto de conceitos e componentes fundamentais a partir do qual suas funcionalidades giram em torno.
 
 Para explicarmos melhor sobre, vamos recorrer a um exemplo.
 
@@ -82,7 +82,7 @@ dag = DAG(
 )
 ```
 
-Nesta fase, estamos criando um objeto do tipo `DAG`. Este objeto é o ponto de partida para a criação do nosso pipeline e o recurso para o qual o Airflow irá olhar.
+Nesta fase, estamos criando um objeto do tipo `DAG`. Este objeto é o ponto de partida para a criação do nosso pipeline e o recurso que utilizamos para definir nossos pipelines.
 
 Uma DAG tem vários parâmetros, no nosso caso:
 
@@ -102,7 +102,9 @@ download_launches = BashOperator(
 
 No caso, declaramos um `BashOperator` cuja responsabilidade é executar um *comando Bash*.
 
-Os operadores são os "caras" responsáveis por executar as tarefas em uma DAG e são independentes entre si. Contudo, ainda podemos definir um fluxo de execução das tarefas $-$ chamamos isso de *dependências*.
+Do ponto de vista do usuário, os operadores são os componentes responsáveis por executar as tarefas em uma DAG.
+
+Operadores são totalmente independentes entre si, o que significa que os dados tratados por um operador são, a priori, desconhecidos pelos outros. Contudo, a fim de construirmos um fluxo de execução adequado, precisamos no mínimo definir uma ordem na qual as tarefas serão executadas. Logicamente, o Airflow nos permite definir a ordem de execução das tarefas e chamamos isso de *dependências*.
 
 Em nosso código, definimos as dependências no seguinte trecho:
 
@@ -110,7 +112,7 @@ Em nosso código, definimos as dependências no seguinte trecho:
 download_launches >> get_pictures >> notify
 ```
 
-No Airflow, utilizamos o operador binário *"rshift"* (`>>`) para definirmos as dependências entre as tarefas. Assim, a tarefa `get_pictures` só acontecerá após `download_launches`. Afinal, só podemos filtrar as imagens após as coletarmos!
+Utilizamos o operador binário *"rshift"* (`>>`) para definirmos as dependências entre as tarefas. Com isso, estamos dizend ao Airflow que a tarefa `get_pictures` só deverá ser executada após `download_launches`. Afinal, só podemos filtrar as imagens após as coletarmos!
 
 !!! note "Nota"
     Outro termo comum para o relacionamento entre tasks é `upstream` e `downstream`.
@@ -118,19 +120,18 @@ No Airflow, utilizamos o operador binário *"rshift"* (`>>`) para definirmos as 
     - `upstream`. Tarefa que é dependência de outra. Por exemplo, `download_launches` é `upstream` de `get_pictures`.
     - `downstream`. A tarefa dependente. Por exemplo, `get_pictures` é `downstream` de `download_launches`.
 
-O `BashOperator` também possui diversos parâmetros.
+O `BashOperator` possui diversos parâmetros. Os mais importantes são:
 
-- `task_id` (obrigatório). Identificador da task.
-- `bash_command` (obrigatório). Comando Bash a ser executado.
-
-Na linha `dag=dag`, estamos atrelando a tarefa definida à DAG desejada.
+- **`task_id`**. Identificador da task **(obrigatório)**.
+- **`bash_command`**. Comando ou script Bash a ser executado **(obrigatório)**.
+- **`dag`**. DAG na qual a tarefa deve estar atrelada.
 
 !!! note "Nota"
     O argumento `task_id` é um campo obrigatório em todos os operadores.
 
 
 !!! tip "Dica"
-    Na verdade, existem diversas formas de fazermos isso, por exemplo, podemos abstrair esse trecho (`dag=dag`) em particular, se criarmos uma DAG como uma Gerenciadora de Contexto.
+    Existem diversas formas de fazermos de atrelarmos as tarefas à uma DAG. Por exemplo, podemos abstrair o trecho `dag=dag` se criarmos uma DAG como uma *gerenciadora de contexto*.
 
 Já no seguinte trecho:
 
@@ -144,9 +145,9 @@ get_pictures = PythonOperator(
 
 Estamos utilizando o operador `PythonOperator` $-$ cuja responsabilidade é executar uma **função** Python (ou então, um método)  $-$ para executar a tarefa de filtragem das fotos coletadas definida na função `_get_pictures`.
 
-### Tasks vs Operators
+### Tarefas vs Operadores
 
-Operadores e tasks são um conceito confuso e podem parecer a mesma coisa, mas não são!
+Operadores (operators) e tarefas (tasks) são um podem parecer a mesma coisa, mas não são!
 
 - **Operadores.** Componentes especializados em executar um único e específico trabalho dentro do workflow. Por exemplo, temos:
     - `BashOperator`. Responsável por executar um comando ou script Bash.
@@ -155,12 +156,10 @@ Operadores e tasks são um conceito confuso e podem parecer a mesma coisa, mas n
 
     De certa forma, podemos pensar que uma DAG simplesmente orquestra a execução de uma coleção de operadores. Ainda, como são os operadores que, conceitualmente, executam as tarefas em si, acabamos usando ambos os termos de forma intercambiável.
 
-- **Tasks.** Componentes que podem ser vistos como "gerenciadores" de operadores. De fato, embora do ponto de vista do usuário tarefas e operadores sejam equivalente, no Airflow ainda temos o componente `task`.
-
-    Tal componente é responsável por gerenciar o estado de operação dos operadores.
+- **Tarefas.** Componentes que podem ser vistos como "gerenciadores" de operadores. De fato, embora do ponto de vista do usuário, tarefas e operadores sejam equivalentes, no Airflow ainda temos o componente `task` em si, que é responsável por gerenciar o estado de operação dos operadores.
 
     <p style="text-align: center;"><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/docs/assets/tasks_vs_operators.png"     alt="tasks_vs_operators" style="border-radius: 1rem"/></p>
-    <p style="text-align: center; font-size: 0.75rem; margin-bottom: 1.5rem;">
+    <p class="post__img_legend">
       <b>Fonte:</b> <a target="_blank" href="https://www.amazon.com.br/Data-Pipelines-Apache-Airflow-Harenslak/dp/1617296902">Data Pipelines with Apache Airflow (2021) by Bas    Harenslak and Julian de Ruiter</a>
     </p>
 
@@ -341,7 +340,7 @@ Os possíveis estados são:
 - `removed`. A task foi removida da DAG desde sua última execução.
 
 <p><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/docs/assets/task_lifecycle_diagram.png" alt="tasks_lifecycle" style="text-align: center; border-radius: 1rem"/></p>
-<p style="text-align: center; font-size: 0.75rem; margin-bottom: 1.5rem;">
+<p class="post__img_legend">
   <b>Fonte:</b> <a target="_blank" href="https://airflow.apache.org/docs/apache-airflow/stable/concepts/tasks.html#task-instances">Task Instances - Apache Airflow Documentation</a>
 </p>
 
@@ -355,11 +354,6 @@ Os operadores são geralmente (mas nem sempre) atômicos, o que significa que *p
   - Se isso não for possível (ou puder ser evitado de forma alguma), o Airflow tem uma *feature*  para a comunicação cruzada entre operadores chamada **XCom** descrita na seção [XComs](https://airflow.apache.org/docs/apache-airflow/stable/concepts.html#concepts-xcom).
 - Operadores **não precisam ser atribuídos as DAGs imediatamente** (anteriormente, a `dag` era um argumento obrigatório).
   - No entanto, uma vez que um operador é atribuído a um DAG, **ele não pode ser transferido ou não atribuído**
-
-Alguns exemplos de operadores populares são:
-
-- [`BashOperator`](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html#airflow.operators.bash.BashOperator). Executa um comando bash.
-- [`PythonOperator`](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator). Chama uma função Python qualquer.
 
 ## Referências
 

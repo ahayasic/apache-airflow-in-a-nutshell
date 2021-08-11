@@ -188,7 +188,7 @@ nav:
     - Introdução: content/introduction_to_apache_airflow/introduction_to_apache_airflow.md
     - Conceitos e Componentes Essenciais: content/introduction_to_apache_airflow/essential_concepts_and_components.md
   - Construindo Pipelines:
-    - Agendamento e Triggers: content/building_pipelines/scheduling_and_triggers.md
+    - Agendamento e Sensores: content/building_pipelines/scheduling_and_sensors.md
     - Tarefas e Modelos: content/building_pipelines/templating_tasks.md
     - Dependências entre Tarefas: content/building_pipelines/dependencies_between_tasks.md
     - Executando Tarefas em Containers: content/building_pipelines/running_tasks_in_containers.md
