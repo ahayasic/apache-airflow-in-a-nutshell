@@ -1,89 +1,87 @@
-!!! info "Work in progress"
+# Introduction to Apache Airflow
 
-    # Introduction to Apache Airflow
+## Introduction to Pipeline
 
-    ## Introduction to Pipelines
+## Apache Airflow for Pipeline
 
-    ## Apache Airflow for Pipelines
+### When to use Airflow
 
-    ### When to use Airflow
+## Apache Airflow Architecture
 
-    ## Apache Airflow Architecture
+O Airflow é composto arquiteturalmente por 4 componentes:
 
-    O Airflow é composto, essencialmente, por 4 componentes.
+- **Webserver (UI).** Interface gráfica do Airflow via web.
 
-    - **Webserver (UI).**
-      - Interface Gráfica do Airflow
-      - Aplicação Flask executada sobre gunicorn que fornece uma interface gráfica para interação com o banco de dados de metadados e arquivos de log.
-    - **Scheduler.**
-      - Processo responsável pelo escalonamento das tarefas que compõem as DAGs.
-      - Essencialmente, um processo Python multi-thread que define, através do banco de dados de metadados, quais tarefas devem ser executadas, quando e onde **(*)**.
-    - **Executor.**
-      - Componente através do qual as tarefas são, de fato, executadas.
-      - O Airflow contém uma grande diversidade de executos, cada um com suas vantagens e desvantagens.
-    - **Metadata Database.**
-      - Banco de dados que armazena todas as informações, metadados e status das DAGs e tarefas.
-      - É o componente através do qual os demais componentes interagem.
+    Nada mais é que uma aplicação Flask executada sobre gunicorn que nos fornece uma interface gráfica para interação com o banco de metadados e arquivos de log.
 
-    ## Fluxo de Execução das Tarefas
+- **Scheduler.** Processo responsável pelo escalonamento das tarefas que compõem as DAGs.
 
-    A partir do momento em que o **scheduler** é iniciado:
+    Essencialmente um processo Python multi-thread que define, através do banco de metadados, quais tarefas devem ser executadas, quando e onde.
 
-    1. O **Scheduler** "lê" o diretório de DAGs e instancia todos os objetos DAG no banco de dados de metadados.
+- **Executor.** Componente através do qual as tarefas são, de fato, executadas. O Airflow contém uma grande diversidade de executos, cada um com suas vantagens e desvantagens.
 
-       > **Nota**
-       >
-       > This means all top level code (i.e. anything that isn't defining the DAG) in a DAG file will get run each scheduler heartbeat. Try to avoid top level code to    your DAG file unless absolutely necessary.
+- **Metadata Database.** Banco de dados (por simplicidade, vamos usar a terminologia "banco de metadados") que armazena todas as informações, metadados e status das DAGs e tarefas.
 
-    2. São criadas (através do processo de instanciação) todas as Dag Runs**(\*\*)** necessárias com base nos parâmetros de escalonammento das tarefas de cada DAG.
+    É o componente através do qual os demais componentes interagem entre si.
 
-    3. Em seguida, `TaskInstances` são instanciadas para cada tarefa que precisa ser executada e marcadas como `Scheduled` no banco de dados, além de outros metadados.
+### Fluxo de Execução das Tarefa
 
-    4. O **Scheduler** então, consulta todas as tasks marcadas como `Scheduled` e as envia para o **Executor**, com o status alterado para `Queued`.
+Para entendermos melhor como o Airflow funciona e o papel de cada componente da arquitetura na execução de pipelines, precisamos entender o fluxo de execução das DAGs suas respectivas tarefas.
 
-    5. O **Executor** puxa as tarefas da fila, aloca *workers* para executar as tarefas e altera o status de cada tarefa em execuçao de `Queued` para `Running`.
+Essencialmente, a partir do momento em que o **scheduler** é iniciado:
 
-       - O comportamento de como as tarefas são puxadas da fila e executadas varia de **executor** para **executor**.
+1. O **Scheduler** "lê" o diretório de DAGs e instancia todos os objetos DAG no banco de metadados.
 
-    6. A tarefa, ao ser encerrada, tem seu status alterado pelo *worker* para seu estado final (e.g., `Finised`, `Failed`) que, por sua vez, informa ao **Scheduler** que     então reflete essa mudança no banco de dados de metadados.
+    !!! note "Nota"
+        Isso significa que todos os códigos *top-level* $-$ mesmo que não definam DAGs $-$ serão lidos pelo scheduler, o que pode causar problemas de desempenho. Portanto, devemos evitar códigos desnecessários no diretório de DAGs.
 
-    A Figura abaixo ilustra o processo especificado.
+2. Através do processo de instanciação (citado acima), todas as Dag Runs[^1] necessárias são criadas de acordo com os parâmetros de agendamento (ou escalonamento) das tarefas de cada DAG.
+3. Para cada tarefa que precisa ser executada, são instanciadas `TaskInstances`[^2] que são marcadas como `Scheduled` no banco de metadados (além de outros metadados necessários para a execução das tarefas).
+4. O **Scheduler** consulta todas as tasks marcadas como `Scheduled` e as envia para o **Executor**, atualizando seu status para `Queued`
+5. O **Executor** puxa as tarefas da fila de execução e aloca *workers* para executá-las, alterando seu status de `Queued` para `Running`
 
-    ![img](https://assets2.astronomer.io/main/guides/airflow_component_relationship_fixed.png)
+    !!! note "Nota"
+        O comportamento de como as tarefas são puxadas da fila e executadas difere para cada **Executor** escolhido.
 
-    _**Fonte.** astronomer.io_
+6. A tarefa, ao ser encerrada, tem seu status alterado pelo *worker* para seu estado final (e.g., `Finised`, `Failed`) que então informa ao **Scheduler** que, por sua vez, reflete as mudanças no banco de metadados.
 
-    ## Controle de Interações Entre os Componentes
+A Figura abaixo ilustra o processo especificado.
 
-    A forma como os componentes se comportam e/ou interagem entre si pode ser definida através do arquivo de configuração `airflow.cfg`.
+![img](https://assets2.astronomer.io/main/guides/airflow_component_relationship_fixed.png)
+_**Fonte.** astronomer.io
 
-    ### Executors
+  [^1]: TODO
+  [^2]: TODO
 
-    As opções de Executores padrão para o Airflow são:
+## Controle de Interações Entre os Componente
 
-    - **`SequentialExecutor`**. Executa tarefas sequencialmente, sem paralelismo.
-      - Útil para um ambiente de teste ou para debugar bugs mais profundos do Airflow e aplicações.
-    - **`LocalExecutor`**. Executa tarefas com suporte à paralelismo e hyperthreading.
-      - Uma boa opção para cenários onde o Airflow está em uma máquina local ou em um único nó.
-    - **`CeleryExecutor`**. Opção para execução do Airflow em Clusters Distribuídos.
-      - Redis, RabbitMq ou outro sistema de fila de mensagens para coordenar as tarefas entre os *workers*.
-    - **`KubernetesExecutor`**. Outra opção para execução do Airflow em Clusters Kubernetes.
-      - Executa tarefas através da criação de um pod temporário para cada tarefa a ser executada, permitindo que os usuários passem configurações personalizadas para cada    uma de suas tarefas e usem os recursos de maneira eficiente.
+A forma como os componentes se comportam e/ou interagem entre si pode ser definida através do arquivo de configuração `airflow.cfg`.
 
-    ### Paralelismo
+### Executor
 
-    Através dos parâmetros `parallelism`, `dag_concurrency` e `max_active_runs_per_dag` do arquivo `airflow.cfg` podemos configurar o Airflow para determinar quantas     tarefas podem ser executadas de uma vez.
+As opções de Executores padrões para o Airflow são:
 
-    - **`parallelism`**. Número máximo de instâncias de tarefas que podem ser executadas simultaneamente.
+- **`SequentialExecutor`**. Executa tarefas sequencialmente, sem paralelismo. Útil em ambientes de teste ou para solução de bugs complexos.
+- **`LocalExecutor`**. Executa tarefas com suporte à paralelismo e hyperthreading. Uma boa opção em cenários onde o Airflow está em uma máquina local ou em um único nó.
+- **`CeleryExecutor`**. Opção para execução do Airflow em clusters distribuídos que utiliza de Redis, RabbitMq ou outro sistema de fila de mensagens para coordenar o envio de tarefas aos *workers*.
+- **`KubernetesExecutor`**. Opção para execução do Airflow em clusters Kubernetes. Executa tarefas através da criação de um pod temporário para cada tarefa a ser executada, permitindo que os usuários passem configurações personalizadas para cada uma de suas tarefas e usem os recursos do cluster de maneira eficiente.
 
-      > Note que o número máximo vale para todas as DAGs. Ou seja, o número máximo de instâncias de tarefas considerando todas as instâncias de tarefas de todas as DAGs.
+### Paralelismo
 
-    - **`dag_concurrency`**. Número máximo de instâncias de tarefas que podem ser executadas simultaneamente para uma DAG específica.
+Através dos parâmetros `parallelism`, `dag_concurrency` e `max_active_runs_per_dag` do arquivo `airflow.cfg` podemos configurar o Airflow para determinar quantas     tarefas podem ser executadas simultaneamente.
 
-    - **`worker_concurrency`** (**`CeleryExecutor`**).  Número máximo de  tarefas que um único *worker* pode processar.
+- **`parallelism`**. Número máximo de instâncias de tarefas que podem ser executadas simultaneamente.
 
-      > Portanto, se você tiver 4 workers em execução em uma simultaneidade de trabalho de 16, poderá processar até 64 tarefas de uma vez.
+    !!! note "Nota"
+        O número máximo compreende a soma de tarefas de todas as DAGs. Em outras palavras, o `parallelism` informa ao Airflow quantas tarefas ele pode executar simultaneamente, considerando todas as DAGs ativas.
 
-    - **`max_active_runs_per_dag`**. Número máximo de DagRuns ao longo do tempo podem ser escalonadas para cada DAG específica.
+- **`dag_concurrency`**. Número máximo de instâncias de tarefas que podem ser executadas simultaneamente em cada DAG.
+- **`worker_concurrency`** (**`CeleryExecutor`**). Número máximo de tarefas que um único *worker* pode processar.
 
-      > Esse número deve depender de quanto tempo as DAGs levam para executar, seu intervalo de escalonamento e desempenho do **scheduler**.
+    Portanto, se você tiver 4 workers em execução e `worker_concurrency=16`, poderá processar até 64 tarefas simultaneamente.
+
+- **`max_active_runs_per_dag`**. Número máximo de DagRuns ao longo do tempo podem ser escalonadas para cada DAG específica.
+
+    !!! note "Nota"
+        Esse número deve depender de quanto tempo as DAGs levam para executar, seu intervalo de escalonamento e desempenho do **scheduler**.
+
