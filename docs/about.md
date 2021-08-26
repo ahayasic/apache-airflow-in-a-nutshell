@@ -1,6 +1,6 @@
 # Sobre o Autor
 
-<img src="../assets/img/about.jpg" class="center" style="width: 300px; display: block; margin: auto; border-radius: 50%; box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;">
+<img src="https://raw.githubusercontent.com/ahayasic/ahayasic.github.io/main/assets/img/about.jpg" class="center" style="width: 300px; display: block; margin: auto; border-radius: 50%; box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;">
 
 Olá, meu nome é Alisson! Tenho 23 anos, estudo ciência da computação na Universidade Federal São Carlos e atualmente trabalho como cientista de dados na [Daitan (an Encora Company)](https://www.daitan.com/).
 
