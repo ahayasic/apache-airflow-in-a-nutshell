@@ -1,6 +1,13 @@
 # Agendamento e Sensores
 
-Para que as DAGs sejam executáveis, elas precisam de:
+## Introdução
+
+DAGs são disparadas de duas formas:
+
+- Manualmente por meio da UI ou API.
+- Automaticamente por meio de uma política de disparo.
+
+Já para que as DAGs sejam "disparáveis" (i.e. executáveis) elas precisam de:
 
 - Uma data de início a partir do qual podem ser executadas.
 - Uma política de disparo que pode ser (além do disparo manual): um intervalo de execução e/ou um critério condicional.
@@ -235,6 +242,8 @@ Embora seja possível aumentar o número de tarefas executáveis em paralelo, as
     No modo `reschedule`, o sensor só permanecerá ativo como uma tarefa enquanto estiver fazendo as verificações. Ao final da verificação, caso o critério de sucesso não seja cumprido, o *scheduler* colocará o sensor em estado de espera, liberando assim uma posição (*slot*) para outras tarefas serem executadas.
 
 ## Triggando outras DAGs
+
+!!! failure "TODO"
 
 ## Exemplos
 Para exemplos e casos de uso dos tópicos abordados nesta seção, acesse [Estudos de Caso](#).
