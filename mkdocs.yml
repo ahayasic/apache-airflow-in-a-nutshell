@@ -189,7 +189,7 @@ nav:
     - Conceitos e Componentes Essenciais: content/introduction_to_apache_airflow/essential_concepts_and_components.md
   - Construindo Pipelines:
     - Agendamento e Sensores: content/building_pipelines/scheduling_and_sensors.md
-    - Tarefas e Modelos: content/building_pipelines/templating_tasks.md
+    - Jinja Templates: content/building_pipelines/templating_tasks.md
     - Dependências entre Tarefas: content/building_pipelines/dependencies_between_tasks.md
     - Executando Tarefas em Containers: content/building_pipelines/running_tasks_in_containers.md
     - Testando DAGs: content/building_pipelines/testing_dags.md
@@ -198,7 +198,7 @@ nav:
     - Criando Componentes Personalizados: content/going_deeper/creating_custom_components.md
   - Boas Práticas & Receitas:
     - Boas Práticas: content/best_practices/best_practices.md
-    - Receitas & Códigos Padrões: content/best_practices/recipes.md
+    - Receitas: content/best_practices/recipes.md
   - Operando e Administrando Apache Airflow:
     - Administrando o Airflow: content/admin_ops/operating_airflow.md
     - Executando o Aiflow Localmente: content/admin_ops/running_airflow_locally.md
