@@ -101,8 +101,8 @@ Logo:
 
 ## Macros Customizados
 
-!!! failure "TODO"
+!!! info "Work in progress"
 
 ## Renderizando Objetos Python Nativos
 
-!!! failure "TODO"
+!!! info "Work in progress"

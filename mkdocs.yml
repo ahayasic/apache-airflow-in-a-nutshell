@@ -37,7 +37,7 @@ theme:
     # - header.autohide           # header automatically hidden
     - navigation.indexes          # documents can be directly attached to sections (not working properly!)
     # - navigation.tabs           # top-level sections rendered in menu
-    # - navigation.tabs.sticky    # lock sections in menu
+    - navigation.tabs.sticky      # lock sections in menu
     - search.highlight            # highlight all occurrences of word searched
     # - search.share              # shareble link to current query search
     - search.suggest              # search display the likeliest completion for the last word
