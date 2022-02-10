@@ -1,0 +1,1461 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="Alisson Hayasi da Costa">
+      
+      
+        <link rel="canonical" href="https://ahayasic.github.io/apache-airflow-in-a-nutshell/content/introduction_to_apache_airflow/essential_concepts_and_components/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.10">
+    
+    
+      
+        <title>Conceitos e Componentes Essenciais - Apache Airflow in a Nutshell</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.d6be258b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700%7CDM+Mono&display=fallback">
+        <style>:root{--md-text-font:"Source Sans Pro";--md-code-font:"DM Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#apache-airflow-conceitos-componentes" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../../.." title="Apache Airflow in a Nutshell" class="md-header__button md-logo" aria-label="Apache Airflow in a Nutshell" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Apache Airflow in a Nutshell
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Conceitos e Componentes Essenciais
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Trocar para Modo Escuro"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Trocar para Modo Escuro" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Trocar para Modo Claro"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Trocar para Modo Claro" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Limpar" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ahayasic/apache-airflow-in-a-nutshell" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ahayasic/apache-airflow-in-a-nutshell
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Apache Airflow in a Nutshell" class="md-nav__button md-logo" aria-label="Apache Airflow in a Nutshell" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Apache Airflow in a Nutshell
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ahayasic/apache-airflow-in-a-nutshell" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ahayasic/apache-airflow-in-a-nutshell
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Início
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../about/" class="md-nav__link">
+        Sobre o Autor
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Introdução ao Apache Airflow
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Introdução ao Apache Airflow" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Introdução ao Apache Airflow
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../introduction_to_apache_airflow/" class="md-nav__link">
+        Introdução
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Conceitos e Componentes Essenciais
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Conceitos e Componentes Essenciais
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dag-de-exemplo" class="md-nav__link">
+    DAG de Exemplo
+  </a>
+  
+    <nav class="md-nav" aria-label="DAG de Exemplo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarefas-vs-operadores" class="md-nav__link">
+    Tarefas vs Operadores
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#triggando-a-dag-manualmente" class="md-nav__link">
+    Triggando a DAG Manualmente
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lidando-com-tasks-que-falharam" class="md-nav__link">
+    Lidando com Tasks que Falharam
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#definindo-intervalos-de-execucao-regulares" class="md-nav__link">
+    Definindo Intervalos de Execução Regulares
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apache-airflow-principais-conceitos" class="md-nav__link">
+    Apache Airflow Principais Conceitos
+  </a>
+  
+    <nav class="md-nav" aria-label="Apache Airflow Principais Conceitos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dag-directed-acyclic-graph" class="md-nav__link">
+    DAG (Directed Acyclic Graph)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dag-run" class="md-nav__link">
+    DAG Run
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#argumentos-padrao-default_args" class="md-nav__link">
+    Argumentos Padrão (default_args)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarefas" class="md-nav__link">
+    Tarefas
+  </a>
+  
+    <nav class="md-nav" aria-label="Tarefas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#relacionamento-entre-tarefas" class="md-nav__link">
+    Relacionamento Entre Tarefas
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task-instances" class="md-nav__link">
+    Task Instances
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operadores" class="md-nav__link">
+    Operadores
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referencias" class="md-nav__link">
+    Referências
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Construindo Pipelines
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Construindo Pipelines" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Construindo Pipelines
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../building_pipelines/scheduling_and_sensors/" class="md-nav__link">
+        Agendamento e Sensores
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../building_pipelines/templating_tasks/" class="md-nav__link">
+        Jinja Templates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../building_pipelines/dependencies_between_tasks/" class="md-nav__link">
+        Dependências entre Tarefas
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../building_pipelines/running_tasks_in_containers/" class="md-nav__link">
+        Executando Tarefas em Containers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../building_pipelines/testing_dags/" class="md-nav__link">
+        Testando DAGs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Indo Além
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Indo Além" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Indo Além
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../going_deeper/communicating_external_systems/" class="md-nav__link">
+        Comunicando com Sistemas Externos
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../going_deeper/creating_custom_components/" class="md-nav__link">
+        Criando Componentes Personalizados
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Boas Práticas & Receitas
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Boas Práticas & Receitas" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Boas Práticas & Receitas
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../best_practices/best_practices/" class="md-nav__link">
+        Boas Práticas
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../best_practices/recipes/" class="md-nav__link">
+        Receitas
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          Operando e Administrando Apache Airflow
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Operando e Administrando Apache Airflow" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Operando e Administrando Apache Airflow
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin_ops/operating_airflow/" class="md-nav__link">
+        Administrando o Airflow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin_ops/running_airflow_locally/" class="md-nav__link">
+        Executando o Aiflow Localmente
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin_ops/running_airflow_in_the_clouds/" class="md-nav__link">
+        Executando o Airflow na Nuvem
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dag-de-exemplo" class="md-nav__link">
+    DAG de Exemplo
+  </a>
+  
+    <nav class="md-nav" aria-label="DAG de Exemplo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarefas-vs-operadores" class="md-nav__link">
+    Tarefas vs Operadores
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#triggando-a-dag-manualmente" class="md-nav__link">
+    Triggando a DAG Manualmente
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lidando-com-tasks-que-falharam" class="md-nav__link">
+    Lidando com Tasks que Falharam
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#definindo-intervalos-de-execucao-regulares" class="md-nav__link">
+    Definindo Intervalos de Execução Regulares
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apache-airflow-principais-conceitos" class="md-nav__link">
+    Apache Airflow Principais Conceitos
+  </a>
+  
+    <nav class="md-nav" aria-label="Apache Airflow Principais Conceitos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dag-directed-acyclic-graph" class="md-nav__link">
+    DAG (Directed Acyclic Graph)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dag-run" class="md-nav__link">
+    DAG Run
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#argumentos-padrao-default_args" class="md-nav__link">
+    Argumentos Padrão (default_args)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarefas" class="md-nav__link">
+    Tarefas
+  </a>
+  
+    <nav class="md-nav" aria-label="Tarefas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#relacionamento-entre-tarefas" class="md-nav__link">
+    Relacionamento Entre Tarefas
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task-instances" class="md-nav__link">
+    Task Instances
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operadores" class="md-nav__link">
+    Operadores
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referencias" class="md-nav__link">
+    Referências
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+<h1 id="apache-airflow-conceitos-componentes">Apache Airflow Conceitos &amp; Componentes<a class="headerlink" href="#apache-airflow-conceitos-componentes" title="Permanent link">&para;</a></h1>
+<p>O Airflow é uma ferramenta rica em recursos e funcionalidades. Porém, como toda ferramenta, o Airflow possui um conjunto de conceitos e componentes fundamentais a partir do qual suas funcionalidades giram em torno.</p>
+<p>Para explicarmos melhor sobre, vamos recorrer a um exemplo.</p>
+<h2 id="dag-de-exemplo">DAG de Exemplo<a class="headerlink" href="#dag-de-exemplo" title="Permanent link">&para;</a></h2>
+<p>Abaixo, temos o código de uma DAG que faz o <em>download</em> e o processamento de dados de lançamento de foguetes.</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos=" 1 "></span><span class="c1"># Extracted from Data Pipelines with Apache Airflow (check &quot;Referências&quot; section)</span>
+<span class="linenos" data-linenos=" 2 "></span>
+<span class="linenos" data-linenos=" 3 "></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="linenos" data-linenos=" 4 "></span><span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="linenos" data-linenos=" 5 "></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="linenos" data-linenos=" 6 "></span><span class="kn">import</span> <span class="nn">requests.exceptions</span> <span class="k">as</span> <span class="nn">requests_exceptions</span>
+<span class="linenos" data-linenos=" 7 "></span>
+<span class="linenos" data-linenos=" 8 "></span><span class="kn">from</span> <span class="nn">airflow.models</span> <span class="kn">import</span> <span class="n">DAG</span>
+<span class="linenos" data-linenos=" 9 "></span><span class="kn">from</span> <span class="nn">airflow.utils.dates</span> <span class="kn">import</span> <span class="n">days_ago</span>
+<span class="linenos" data-linenos="10 "></span>
+<span class="linenos" data-linenos="11 "></span><span class="kn">from</span> <span class="nn">airflow.operators.bash</span> <span class="kn">import</span> <span class="n">BashOperator</span>
+<span class="linenos" data-linenos="12 "></span><span class="kn">from</span> <span class="nn">airflow.operators.python</span> <span class="kn">import</span> <span class="n">PythonOperator</span>
+<span class="linenos" data-linenos="13 "></span>
+<span class="linenos" data-linenos="14 "></span>
+<span class="linenos" data-linenos="15 "></span><span class="n">dag</span> <span class="o">=</span> <span class="n">DAG</span><span class="p">(</span>
+<span class="linenos" data-linenos="16 "></span>    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;download_rocket_launches&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="17 "></span>    <span class="n">start_date</span><span class="o">=</span><span class="n">days_ago</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+<span class="linenos" data-linenos="18 "></span>    <span class="n">schedule_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="linenos" data-linenos="19 "></span><span class="p">)</span>
+<span class="linenos" data-linenos="20 "></span>
+<span class="linenos" data-linenos="21 "></span><span class="n">download_launches</span> <span class="o">=</span> <span class="n">BashOperator</span><span class="p">(</span>
+<span class="linenos" data-linenos="22 "></span>    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;download_launches&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="23 "></span>    <span class="n">bash_command</span><span class="o">=</span><span class="s2">&quot;curl -o /tmp/launches.json -L &#39;https://ll.thespacedevs.com/2.0.0/launch/upcoming&#39;&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="24 "></span>    <span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span>
+<span class="linenos" data-linenos="25 "></span><span class="p">)</span>
+<span class="linenos" data-linenos="26 "></span>
+<span class="linenos" data-linenos="27 "></span><span class="k">def</span> <span class="nf">_get_pictures</span><span class="p">():</span>
+<span class="linenos" data-linenos="28 "></span>    <span class="c1"># Ensure directory exists</span>
+<span class="linenos" data-linenos="29 "></span>    <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/tmp/images&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="linenos" data-linenos="30 "></span>
+<span class="linenos" data-linenos="31 "></span>    <span class="c1"># Download all pictures in launches.json</span>
+<span class="linenos" data-linenos="32 "></span>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/launches.json&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="linenos" data-linenos="33 "></span>        <span class="n">launches</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="linenos" data-linenos="34 "></span>        <span class="n">image_urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">launch</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">launch</span> <span class="ow">in</span> <span class="n">launches</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]]</span>
+<span class="linenos" data-linenos="35 "></span>
+<span class="linenos" data-linenos="36 "></span>        <span class="k">for</span> <span class="n">image_url</span> <span class="ow">in</span> <span class="n">image_urls</span><span class="p">:</span>
+<span class="linenos" data-linenos="37 "></span>            <span class="k">try</span><span class="p">:</span>
+<span class="linenos" data-linenos="38 "></span>                <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_url</span><span class="p">)</span>
+<span class="linenos" data-linenos="39 "></span>                <span class="n">image_filename</span> <span class="o">=</span> <span class="n">image_url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="linenos" data-linenos="40 "></span>                <span class="n">target_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/tmp/images/</span><span class="si">{</span><span class="n">image_filename</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="linenos" data-linenos="41 "></span>                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">target_file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="linenos" data-linenos="42 "></span>                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<span class="linenos" data-linenos="43 "></span>                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloaded </span><span class="si">{</span><span class="n">image_url</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">target_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos" data-linenos="44 "></span>            <span class="k">except</span> <span class="n">requests_exceptions</span><span class="o">.</span><span class="n">MissingSchema</span><span class="p">:</span>
+<span class="linenos" data-linenos="45 "></span>                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">image_url</span><span class="si">}</span><span class="s2"> appears to be an invalid URL.&quot;</span><span class="p">)</span>
+<span class="linenos" data-linenos="46 "></span>            <span class="k">except</span> <span class="n">requests_exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">:</span>
+<span class="linenos" data-linenos="47 "></span>                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not connect to </span><span class="si">{</span><span class="n">image_url</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<span class="linenos" data-linenos="48 "></span>
+<span class="linenos" data-linenos="49 "></span><span class="n">get_pictures</span> <span class="o">=</span> <span class="n">PythonOperator</span><span class="p">(</span>
+<span class="linenos" data-linenos="50 "></span>    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;get_pictures&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="51 "></span>    <span class="n">python_callable</span><span class="o">=</span><span class="n">_get_pictures</span><span class="p">,</span>
+<span class="linenos" data-linenos="52 "></span>    <span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span>
+<span class="linenos" data-linenos="53 "></span><span class="p">)</span>
+<span class="linenos" data-linenos="54 "></span>
+<span class="linenos" data-linenos="55 "></span><span class="n">notify</span> <span class="o">=</span> <span class="n">BashOperator</span><span class="p">(</span>
+<span class="linenos" data-linenos="56 "></span>    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;notify&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="57 "></span>    <span class="n">bash_command</span><span class="o">=</span><span class="s1">&#39;echo &quot;There are now $(ls /tmp/images/ | wc -l) images.&quot;&#39;</span><span class="p">,</span>
+<span class="linenos" data-linenos="58 "></span>    <span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span>
+<span class="linenos" data-linenos="59 "></span><span class="p">)</span>
+<span class="linenos" data-linenos="60 "></span>
+<span class="linenos" data-linenos="61 "></span><span class="n">download_launches</span> <span class="o">&gt;&gt;</span> <span class="n">get_pictures</span> <span class="o">&gt;&gt;</span> <span class="n">notify</span>
+</code></pre></div>
+<p>Quebrando o código em etapas,</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="n">dag</span> <span class="o">=</span> <span class="n">DAG</span><span class="p">(</span>
+<span class="linenos" data-linenos="2 "></span>    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;download_rocket_launches&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="3 "></span>    <span class="n">start_date</span><span class="o">=</span><span class="n">airflow</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">days_ago</span><span class="p">(</span><span class="mi">14</span><span class="p">),</span>
+<span class="linenos" data-linenos="4 "></span>    <span class="n">schedule_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="linenos" data-linenos="5 "></span><span class="p">)</span>
+</code></pre></div>
+<p>Nesta fase, estamos criando um objeto do tipo <code>DAG</code>. Este objeto é o ponto de partida para a criação do nosso pipeline e o recurso que utilizamos para definir nossos pipelines.</p>
+<p>Uma DAG tem vários parâmetros, no nosso caso:</p>
+<ul>
+<li><code>dag_id</code> <strong>[obrigatório]</strong>. Identificador da DAG. Deve ser um nome único, sem caracteres especiais (com exceção de <em>underscores</em>)</li>
+<li><code>start_date</code> <strong>[obrigatório]</strong>. Data a partir do qual a DAG pode ser executada.</li>
+<li><code>schedule_interval</code>. Intervalo de execução da DAG. Ao atribuirmos <code>None</code>, estamos definindo que a DAG em questão só será executada quando a triggarmos manualmente.</li>
+</ul>
+<p>Em seguida, definimos nossa primeira tarefa.</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="n">download_launches</span> <span class="o">=</span> <span class="n">BashOperator</span><span class="p">(</span>
+<span class="linenos" data-linenos="2 "></span>    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;download_launches&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="3 "></span>    <span class="n">bash_command</span><span class="o">=</span><span class="s2">&quot;curl -o /tmp/launches.json -L &#39;https://ll.thespacedevs.com/2.0.0/launch/upcoming&#39;&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="4 "></span>    <span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span>
+<span class="linenos" data-linenos="5 "></span><span class="p">)</span>
+</code></pre></div>
+<p>No caso, declaramos um <code>BashOperator</code> cuja responsabilidade é executar um <em>comando Bash</em>.</p>
+<p>Do ponto de vista do usuário, os operadores são os componentes responsáveis por executar as tarefas em uma DAG.</p>
+<p>Operadores são totalmente independentes entre si, o que significa que os dados tratados por um operador são, a priori, desconhecidos pelos outros. Contudo, a fim de construirmos um fluxo de execução adequado, precisamos no mínimo definir uma ordem na qual as tarefas serão executadas. Logicamente, o Airflow nos permite definir a ordem de execução das tarefas e chamamos isso de <em>dependências</em>.</p>
+<p>Em nosso código, definimos as dependências no seguinte trecho:</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="n">download_launches</span> <span class="o">&gt;&gt;</span> <span class="n">get_pictures</span> <span class="o">&gt;&gt;</span> <span class="n">notify</span>
+</code></pre></div>
+<p>Utilizamos o operador binário <em>"rshift"</em> (<code>&gt;&gt;</code>) para definirmos as dependências entre as tarefas. Com isso, estamos dizend ao Airflow que a tarefa <code>get_pictures</code> só deverá ser executada após <code>download_launches</code>. Afinal, só podemos filtrar as imagens após as coletarmos!</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Outro termo comum para o relacionamento entre tasks é <code>upstream</code> e <code>downstream</code>.</p>
+<ul>
+<li><code>upstream</code>. Tarefa que é dependência de outra. Por exemplo, <code>download_launches</code> é <code>upstream</code> de <code>get_pictures</code>.</li>
+<li><code>downstream</code>. A tarefa dependente. Por exemplo, <code>get_pictures</code> é <code>downstream</code> de <code>download_launches</code>.</li>
+</ul>
+</div>
+<p>O <code>BashOperator</code> possui diversos parâmetros. Os mais importantes são:</p>
+<ul>
+<li><strong><code>task_id</code></strong>. Identificador da task <strong>(obrigatório)</strong>.</li>
+<li><strong><code>bash_command</code></strong>. Comando ou script Bash a ser executado <strong>(obrigatório)</strong>.</li>
+<li><strong><code>dag</code></strong>. DAG na qual a tarefa deve estar atrelada.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>O argumento <code>task_id</code> é um campo obrigatório em todos os operadores.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Dica</p>
+<p>Existem diversas formas de fazermos de atrelarmos as tarefas à uma DAG. Por exemplo, podemos abstrair o trecho <code>dag=dag</code> se criarmos uma DAG como uma <em>gerenciadora de contexto</em>.</p>
+</div>
+<p>Já no seguinte trecho:</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="n">get_pictures</span> <span class="o">=</span> <span class="n">PythonOperator</span><span class="p">(</span>
+<span class="linenos" data-linenos="2 "></span>    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;get_pictures&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="3 "></span>    <span class="n">python_callable</span><span class="o">=</span><span class="n">_get_pictures</span><span class="p">,</span>
+<span class="linenos" data-linenos="4 "></span>    <span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span>
+<span class="linenos" data-linenos="5 "></span><span class="p">)</span>
+</code></pre></div>
+<p>Estamos utilizando o operador <code>PythonOperator</code> <span class="arithmatex">\(-\)</span> cuja responsabilidade é executar uma <strong>função</strong> Python (ou então, um método)  <span class="arithmatex">\(-\)</span> para executar a tarefa de filtragem das fotos coletadas definida na função <code>_get_pictures</code>.</p>
+<h3 id="tarefas-vs-operadores">Tarefas vs Operadores<a class="headerlink" href="#tarefas-vs-operadores" title="Permanent link">&para;</a></h3>
+<p>Operadores (operators) e tarefas (tasks) são um podem parecer a mesma coisa, mas não são!</p>
+<ul>
+<li>
+<p><strong>Operadores.</strong> Componentes especializados em executar um único e específico trabalho dentro do workflow. Por exemplo, temos:</p>
+<ul>
+<li><code>BashOperator</code>. Responsável por executar um comando ou script Bash.</li>
+<li><code>PythonOperator</code>. Responsável por executar uma função Python.</li>
+<li><code>SimpleHTTPOperator.</code> Responsável por fazer uma chamada HTTP à um endpoint.</li>
+</ul>
+<p>De certa forma, podemos pensar que uma DAG simplesmente orquestra a execução de uma coleção de operadores. Ainda, como são os operadores que, conceitualmente, executam as tarefas em si, acabamos usando ambos os termos de forma intercambiável.</p>
+</li>
+<li>
+<p><strong>Tarefas.</strong> Componentes que podem ser vistos como "gerenciadores" de operadores. De fato, embora do ponto de vista do usuário, tarefas e operadores sejam equivalentes, no Airflow ainda temos o componente <code>task</code> em si, que é responsável por gerenciar o estado de operação dos operadores.</p>
+<p><p style="text-align: center;"><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/docs/assets/tasks_vs_operators.png"     alt="tasks_vs_operators" style="border-radius: 1rem"/></p>
+<p class="post__img_legend">
+  <b>Fonte:</b> <a target="_blank" href="https://www.amazon.com.br/Data-Pipelines-Apache-Airflow-Harenslak/dp/1617296902">Data Pipelines with Apache Airflow (2021) by Bas    Harenslak and Julian de Ruiter</a>
+</p></p>
+</li>
+</ul>
+<h3 id="triggando-a-dag-manualmente">Triggando a DAG Manualmente<a class="headerlink" href="#triggando-a-dag-manualmente" title="Permanent link">&para;</a></h3>
+<p>Agora que temos o código da nossa DAG pronto, podemos executá-la.</p>
+<p>Uma boa prática, é testar o código a fim de encontrar algum problema de sintaxe, por exemplo. Logo, seja o nosso arquivo <code>download_and_process_rocket_data.py</code> a DAG. Basta executarmos</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="err">$</span> <span class="n">python</span> <span class="n">download_and_process_rocket_data</span><span class="o">.</span><span class="n">py</span>
+</code></pre></div>
+<p>Caso o interpretador não encontre qualquer problema de importação ou sintaxe, basta acessarmos a UI do Airflow e triggarmos a DAG manualmente!</p>
+<h3 id="lidando-com-tasks-que-falharam">Lidando com Tasks que Falharam<a class="headerlink" href="#lidando-com-tasks-que-falharam" title="Permanent link">&para;</a></h3>
+<p>É muito comum <span class="arithmatex">\(-\)</span> principalmente durante a etapa de desenvolvimento <span class="arithmatex">\(-\)</span> algumas tarefas falharem. Os motivos da falha podem ser diversos, desde erros de sintaxe até questões mais complexas como problemas de conectividade.</p>
+<p>A primeira ação a ser tomada neste caso é consultar os <em>logs</em> da tarefa que falhou para identificarmos os motivos.</p>
+<p>Uma vez que os motivos são identificados e os problemas corrigidos, podemos retriggar a DAG a partir da tarefa que falhou! Desse modo, não é necessário reexecutarmos tarefas posteriores que foram bem-sucedidas. Basta acessarmos a <strong>tarefa que falhou</strong> através da UI e acionarmos o botão <span class="keys"><kbd>Clear</kbd></span>. Com isso, o Airflow irá resetar o estado atual da tarefa para um estado "escalonável" e então reexecutá-la.</p>
+<h3 id="definindo-intervalos-de-execucao-regulares">Definindo Intervalos de Execução Regulares<a class="headerlink" href="#definindo-intervalos-de-execucao-regulares" title="Permanent link">&para;</a></h3>
+<p>Como visto anteriormente, o Airflow nos fornece um argumento <code>schedule_interval</code> onde podemos especificar o intervalo de execução da DAG.</p>
+<p>Ao atribuirmos <code>None</code>, dizemos ao Airflow que a DAG não possui qualquer intervalo de execução e, portanto, ela só será executada quando a triggarmos manualmente.</p>
+<p>Alternativamente, podemos utilizar a mesma sintaxe da ferramenta <em>Cronjob</em> para definirmos intervalos de execução. Por exemplo, ao atribuirmos <code>@daily</code> ao argumento <code>schedule_interval</code>, estamos dizendo ao Airflow que a DAG em questão deve ser executada diariamente (por padrão, o Airflow irá executá-la às 00hrs).</p>
+<p>Além disso, o Airflow conta com um comportamento chamado <em>Backfill</em>. Isso significa que o Apache Airflow irá definir todos os horários em que a DAG em questão deveria ter sido executada a partir da sua data de início (i.e. <code>start_date</code>) e, nos intervalos onde a DAG não tiver sido executada, o Airflow irá reexecutá-la.</p>
+<h2 id="apache-airflow-principais-conceitos">Apache Airflow Principais Conceitos<a class="headerlink" href="#apache-airflow-principais-conceitos" title="Permanent link">&para;</a></h2>
+<p>Em resumo:</p>
+<ul>
+<li><strong>DAG.</strong> Coleção de tarefas a serem executadas e organizadas de uma forma cuja suas relações e dependências são expressas.</li>
+<li><strong>DAG Run.</strong> Instância de um DAG para uma data e hora específicas.</li>
+<li><strong>Task.</strong> Define um trabalho a ser executado (através de um operador) escrito em Python.</li>
+<li><strong>Task Instance.</strong> An instance of a task - that has been assigned to a DAG and has a state associated with a specific DAG run (i.e for a specific execution_date).</li>
+<li><strong>Operator.</strong> Modelo para a realização de alguma tarefa.</li>
+</ul>
+<h3 id="dag-directed-acyclic-graph">DAG (Directed Acyclic Graph)<a class="headerlink" href="#dag-directed-acyclic-graph" title="Permanent link">&para;</a></h3>
+<p>Uma DAG <em>(Directed Acyclic Graph)</em> é uma coleção de tarefas a serem executadas e organizadas de uma forma cuja suas relações e dependências são expressas.</p>
+<p>DAGs são:</p>
+<ul>
+<li>Definidas através de um script Python.</li>
+<li>Podem ser utilizadas na forma de um Gerenciador de Contexto.</li>
+</ul>
+<p>Os parâmetros mais importantes na declaração de uma DAG são:</p>
+<ul>
+<li><code>dag_id</code>. Identificador do DAG.</li>
+<li><code>start_date</code>. <em>Timestamp</em> a partir do qual o <em>scheduler</em> deve escalonar a DAG. Em outras palavras, é o parâmetro responsável por definir a data à partir da qual a DAG está disponível para execução.</li>
+<li><code>schedule_interval</code>. Intervalo de execução da DAG.</li>
+<li><code>default_args</code>. Dicionário com parâmetros padrões que devem ser passados à todas as tasks</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Dica</p>
+<p>Quando todos os operadores possuírem um conjunto de parâmetros em comum, o uso do <code>defaults_args</code> é a forma mais inteligente de evitar duplicidade de código.</p>
+</div>
+<p>Outros parâmetros interessantes de se ter conhecimento são:</p>
+<ul>
+<li><code>params</code>. Dicionário de parâmetros à nível DAG que são disponibilizados em <em>templates</em> e <em>namespaces</em> sob parâmetros.</li>
+<li><code>concurrency</code>. Número de instâncias de tarefas que podem ser executadas paralelamente.</li>
+<li><code>on_failure_callback</code>. Uma função a ser chamada quando a DAG (mais precisamente, a <code>DAG Run</code> referente à DAG) falhar.</li>
+<li><code>on_success_callback</code>. Mesmo comportamento do parâmetro <code>on_falilure_callback</code>, porém quando a DAG roda com sucesso.</li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">Atenção!</p>
+<p>Note que o Airflow carregará apenas objetos <code>DAG</code> globais!</p>
+</div>
+<p>No Airflow 2.x, através da <em>decorator</em> DAG é possível gerar DAGs através de funções. Assim, qualquer função decorada com <code>@dag</code> retorna um objeto DAG.</p>
+<h3 id="dag-run">DAG Run<a class="headerlink" href="#dag-run" title="Permanent link">&para;</a></h3>
+<p>Uma <code>DAG Run</code> é uma instância de uma DAG que, por sua vez, contém instâncias das tarefas que são executadas para uma <code>execution_date</code> específica.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>A <code>execution_date</code> é a data e hora que a <code>DAG Run</code> e as <code>TaskInstance</code> estão sendo (ou foram) executadas.</p>
+</div>
+<p>Fazendo uma analogia com a Programação Orientada à Objetos, podemos pensar nas <strong>DAGs</strong> como <strong>classes</strong> e nas <strong>DAG Runs</strong> como <strong>objetos da classe DAG</strong> (ou seja, uma instância da classe DAG).</p>
+<h3 id="argumentos-padrao-default_args">Argumentos Padrão (<code>default_args</code>)<a class="headerlink" href="#argumentos-padrao-default_args" title="Permanent link">&para;</a></h3>
+<p>Os argumentos padrões são úteis para aplicar um parâmetro comum a muitos operadores (ou tarefas) através de um dicionário passado pelo argumento <code>default_args</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos=" 1 "></span><span class="n">default_args</span> <span class="o">=</span> <span class="p">{</span>
+<span class="linenos" data-linenos=" 2 "></span>    <span class="s1">&#39;owner&#39;</span><span class="p">:</span> <span class="s1">&#39;airflow&#39;</span><span class="p">,</span>
+<span class="linenos" data-linenos=" 3 "></span>    <span class="s1">&#39;depends_on_past&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="linenos" data-linenos=" 4 "></span>    <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;airflow@example.com&#39;</span><span class="p">],</span>
+<span class="linenos" data-linenos=" 5 "></span>    <span class="s1">&#39;email_on_failure&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="linenos" data-linenos=" 6 "></span>    <span class="s1">&#39;email_on_retry&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="linenos" data-linenos=" 7 "></span>    <span class="s1">&#39;retries&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="linenos" data-linenos=" 8 "></span>    <span class="s1">&#39;retry_delay&#39;</span><span class="p">:</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+<span class="linenos" data-linenos=" 9 "></span>    <span class="c1"># &#39;queue&#39;: &#39;bash_queue&#39;, ##</span>
+<span class="linenos" data-linenos="10 "></span>    <span class="c1"># &#39;pool&#39;: &#39;backfill&#39;, ##</span>
+<span class="linenos" data-linenos="11 "></span>    <span class="c1"># &#39;priority_weight&#39;: 10, ##</span>
+<span class="linenos" data-linenos="12 "></span>    <span class="c1"># &#39;wait_for_downstream&#39;: False,</span>
+<span class="linenos" data-linenos="13 "></span>    <span class="c1"># &#39;sla&#39;: timedelta(hours=2),</span>
+<span class="linenos" data-linenos="14 "></span>    <span class="c1"># &#39;execution_timeout&#39;: timedelta(seconds=300),</span>
+<span class="linenos" data-linenos="15 "></span>    <span class="c1"># &#39;on_failure_callback&#39;: some_function,</span>
+<span class="linenos" data-linenos="16 "></span>    <span class="c1"># &#39;on_success_callback&#39;: some_other_function,</span>
+<span class="linenos" data-linenos="17 "></span>    <span class="c1"># &#39;on_retry_callback&#39;: another_function,</span>
+<span class="linenos" data-linenos="18 "></span>    <span class="c1"># &#39;sla_miss_callback&#39;: yet_another_function,</span>
+<span class="linenos" data-linenos="19 "></span>    <span class="c1"># &#39;trigger_rule&#39;: &#39;all_success&#39;</span>
+<span class="linenos" data-linenos="20 "></span><span class="p">}</span>
+</code></pre></div>
+<p>Os parâmetros mais importantes de serem compartilhados entre as tarefas são:</p>
+<ul>
+<li><code>owner</code>. Administrador da tarefa (ou <em>task</em>).</li>
+<li><code>depends_on_past</code>. Define se as <em>tasks</em> da DAG dependem do sucesso de <em>tasks</em> anteriores para execução.</li>
+<li><code>retries</code>. Quantidade de vezes que uma <em>task</em> deve tentar ser reexecutada, se falhar.</li>
+<li><code>retry_delay</code>. Tempo de espera até uma próxima tentativa de re-execução.</li>
+<li>
+<p><code>on_failure_callback</code>. Uma função a ser chamada quando a tarefa (mais precisamente, a <code>TaskInstance</code> referente à <em>task</em>) falhar.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>No caso, um Dicionário de Contexto é passado como um único parâmetro para esta função. O contexto contém referências a objetos relacionados à instância da tarefa e está    documentado na seção de macros da API.</p>
+</div>
+</li>
+<li>
+<p><code>on_sucess_callback</code>. Mesmo comportamento do parâmetro <code>on_falilure_callback</code>, porém executado  quando a <em>task</em> DAG roda com sucesso.</p>
+</li>
+<li><code>on_retry_callback</code> Mesmo comportamento do parâmetro <code>on_falilure_callback</code>, porém executado .quando ocorre uma tentativa de re-execução da tarefa.</li>
+<li>
+<p><code>trigger_rule</code>. Define a regra pela qual as dependências são aplicadas para que a tarefa seja acionada. As opções são:</p>
+<ul>
+<li><code>{ all_success | all_failed | all_done | one_success | one_failed | none_failed | none_failed_or_skipped | none_skipped | dummy}</code></li>
+<li>Padrão é <code>all_success</code>.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Dica</p>
+<p>As opções podem ser definidas como <em>string</em> ou usando as constantes definidas na classe estática <code>airflow.utils.TriggerRule</code></p>
+</div>
+</li>
+</ul>
+<p>Outros parâmetros interessantes de se ter conhecimento são:</p>
+<ul>
+<li><code>queue</code>.</li>
+<li><code>pool</code>.</li>
+<li><code>priority_weight</code>.</li>
+<li><code>wait_for_downstream</code>.</li>
+<li><code>execution_timeout</code>.</li>
+<li><code>sla</code>.</li>
+<li><code>sla_miss_callback</code>.</li>
+</ul>
+<h3 id="tarefas">Tarefas<a class="headerlink" href="#tarefas" title="Permanent link">&para;</a></h3>
+<p>Uma <strong>Task</strong> define (através de Operadores) uma unidade de trabalho dentro de uma DAG e são representadas como um <strong>nó</strong> na DAG.</p>
+<h4 id="relacionamento-entre-tarefas">Relacionamento Entre Tarefas<a class="headerlink" href="#relacionamento-entre-tarefas" title="Permanent link">&para;</a></h4>
+<p>Para definir o relacionamento (i.e. dependências) entre tarefas, utilizamos os operadores <code>&gt;&gt;</code> e <code>&lt;&lt;</code>. Por exemplo, considere a seguinte DAG com duas <em>tasks</em>:</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="k">with</span> <span class="n">DAG</span><span class="p">(</span><span class="s1">&#39;my_dag&#39;</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="k">as</span> <span class="n">dag</span><span class="p">:</span>
+<span class="linenos" data-linenos="2 "></span>    <span class="n">task_1</span> <span class="o">=</span> <span class="n">DummyOperator</span><span class="p">(</span><span class="s1">&#39;task_1&#39;</span><span class="p">)</span>
+<span class="linenos" data-linenos="3 "></span>    <span class="n">task_2</span> <span class="o">=</span> <span class="n">DummyOperator</span><span class="p">(</span><span class="s1">&#39;task_2&#39;</span><span class="p">)</span>
+<span class="linenos" data-linenos="4 "></span>    <span class="n">task_1</span> <span class="o">&gt;&gt;</span> <span class="n">task_2</span> <span class="c1"># Define dependencies</span>
+</code></pre></div>
+<p>Assim, a <code>task_1</code> começará a ser executado enquanto a <code>task_2</code> espera que <code>task_1</code> seja concluída com sucesso para então iniciar.</p>
+<div class="admonition note">
+<p>Podemos dizer que <code>task_1</code> está à <em>upstream</em> da <code>task_2</code> e, inversamente, <code>task_2</code> está à downstream da <code>task_1</code>.</p>
+</div>
+<h3 id="task-instances">Task Instances<a class="headerlink" href="#task-instances" title="Permanent link">&para;</a></h3>
+<p>Assim como <em>DAGs</em> são instanciadas em <em>DAG Runs</em>, Tasks são instanciadas em <em>Tasks Instances</em>. Dentre seus diversos papéis, as <em>Tasks Instances</em> são as responsáveis por representar o estado de uma tarefa <span class="arithmatex">\(-\)</span> ou seja, em qual etapa do seu ciclo de vida a tarefa se encontra.</p>
+<p>Os possíveis estados são:</p>
+<ul>
+<li><code>none</code>. A task ainda não foi adicionada à fila de execução (i.e. escalonada), uma vez que suas dependências ainda não foram supridas.</li>
+<li><code>scheduled</code>. As dependências da task foram supridas e ela pode ser executada.</li>
+<li><code>queued</code>. A task foi atrelada à um <em>worker</em> pelo Executor e está esperando a disponibilidade do <em>worker</em> para ser executada.</li>
+<li><code>running</code>. A task está em execução (i.e. sendo executada por um <em>worker</em>).</li>
+<li><code>success</code>. A task foi executada sem erros (logo, com sucesso).</li>
+<li><code>failed</code>. A task encontrou erros durante a execução e, portanto, falhou.</li>
+<li><code>skipped</code>. A task foi "pulada" devido à algum mecanismo de "branching" ou similares.</li>
+<li><code>upstream_failed</code>. As dependências da task falharam e, portanto, ela não pode ser executada.</li>
+<li><code>up_for_retry</code>. A task falhou, mas possui mecanismos de "tentativas" definidos e portanto pode ser re-escalonada.</li>
+<li><code>up_for_reeschedule</code>.  A task é um <strong>Sensor</strong> (mais informações em documentos mais avançados) e está no modo <code>scheduled</code>.</li>
+<li><code>sensing</code>. A task é um <strong>Smart Sensor</strong> (mais informações em documentos mais avançados).</li>
+<li><code>removed</code>. A task foi removida da DAG desde sua última execução.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/ahayasic/apache-airflow-in-a-nutshell/main/docs/assets/task_lifecycle_diagram.png" alt="tasks_lifecycle" style="text-align: center; border-radius: 1rem"/></p>
+<p class="post__img_legend">
+  <b>Fonte:</b> <a target="_blank" href="https://airflow.apache.org/docs/apache-airflow/stable/concepts/tasks.html#task-instances">Task Instances - Apache Airflow Documentation</a>
+</p>
+
+<h3 id="operadores">Operadores<a class="headerlink" href="#operadores" title="Permanent link">&para;</a></h3>
+<p>Operadores definem uma única e exclusiva tarefa em um <em>workflow</em>.</p>
+<p>Os operadores são geralmente (mas nem sempre) atômicos, o que significa que <em>podem ser autônomos e não precisam compartilhar recursos com quaisquer outros operadores</em>.</p>
+<ul>
+<li>Se dois operadores precisam compartilhar informações entre si (e.g, nome de arquivo ou uma pequena quantidade de dados), você deve considerar combiná-los em um único operador.</li>
+<li>Se isso não for possível (ou puder ser evitado de forma alguma), o Airflow tem uma <em>feature</em>  para a comunicação cruzada entre operadores chamada <strong>XCom</strong> descrita na seção <a href="https://airflow.apache.org/docs/apache-airflow/stable/concepts.html#concepts-xcom">XComs</a>.</li>
+<li>Operadores <strong>não precisam ser atribuídos as DAGs imediatamente</strong> (anteriormente, a <code>dag</code> era um argumento obrigatório).</li>
+<li>No entanto, uma vez que um operador é atribuído a um DAG, <strong>ele não pode ser transferido ou não atribuído</strong></li>
+</ul>
+<h2 id="referencias">Referências<a class="headerlink" href="#referencias" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://www.amazon.com.br/Data-Pipelines-Apache-Airflow-Harenslak/dp/1617296902">Data Pipelines with Apache Airflow (2021) by Bas Harenslak and Julian de Ruiter</a></li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/concepts/index.html">Concepts <span class="arithmatex">\(-\)</span> Apache Airflow Documentation</a></li>
+</ul>
+
+  
+
+<!-- Last updated date -->
+
+<hr />
+<div class="md-source-date">
+    <div class="row">
+        <div class="col-5">
+            <div class="custom-source-date__date">
+                <small>
+                    <!-- mkdocs-git-revision-date-localized-plugin -->
+                    
+                    Última atualização: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-02-10</span>
+
+                    
+                    <br />Criada: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-02-10</span>
+                    
+
+                    <!-- mkdocs-git-revision-date-plugin -->
+                    
+                </small>
+            </div>
+        </div>
+        <div class="col-7">
+            <div class="row">
+                <div class="custom-source-date__socials">
+                    <img class="custom-source-date__socials__img" src="https://raw.githubusercontent.com/ahayasic/ahayasic.github.io/main/assets/img/about.jpg">
+                    <div class="custom-source-date__socials__name"><small>Alisson Hayasi da Costa</small></div>
+                    <div class="custom-source-date__socials__icons">
+                        <a href="https://linkedin.com/in/ahayasic/" target="_blank">
+                            <span class="twemoji linkedin">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z" /></svg>
+                            </span>
+                        </a>
+                        &middot;
+                        <a href="https://github.com/ahayasic" target="_blank">
+                            <span class="twemoji github">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                            </span>
+                        </a>
+                        &middot;
+                        <a href="https://ahayasic.github.io/" target="_blank">
+                            <span class="twemoji globe">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M1.543 7.25h2.733c.144-2.074.866-3.756 1.58-4.948.12-.197.237-.381.353-.552a6.506 6.506 0 00-4.666 5.5zm2.733 1.5H1.543a6.506 6.506 0 004.666 5.5 11.13 11.13 0 01-.352-.552c-.715-1.192-1.437-2.874-1.581-4.948zm1.504 0h4.44a9.637 9.637 0 01-1.363 4.177c-.306.51-.612.919-.857 1.215a9.978 9.978 0 01-.857-1.215A9.637 9.637 0 015.78 8.75zm4.44-1.5H5.78a9.637 9.637 0 011.363-4.177c.306-.51.612-.919.857-1.215.245.296.55.705.857 1.215A9.638 9.638 0 0110.22 7.25zm1.504 1.5c-.144 2.074-.866 3.756-1.58 4.948-.12.197-.237.381-.353.552a6.506 6.506 0 004.666-5.5h-2.733zm2.733-1.5h-2.733c-.144-2.074-.866-3.756-1.58-4.948a11.738 11.738 0 00-.353-.552 6.506 6.506 0 014.666 5.5zM8 0a8 8 0 100 16A8 8 0 008 0z"></path></svg>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+              
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+            Voltar ao topo
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Rodapé">
+      
+        
+        <a href="../introduction_to_apache_airflow/" class="md-footer__link md-footer__link--prev" aria-label="Anterior: Introdução" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Anterior
+              </span>
+              Introdução
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../../building_pipelines/scheduling_and_sensors/" class="md-footer__link md-footer__link--next" aria-label="Próximo: Agendamento e Sensores" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Próximo
+              </span>
+              Agendamento e Sensores
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2021 Alisson Hayasi da Costa
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/ahayasic/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/ahayasic" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://ahayasic.github.io/" target="_blank" rel="noopener" title="ahayasic.github.io" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M336.5 160C322 70.7 287.8 8 248 8s-74 62.7-88.5 152h177zM152 256c0 22.2 1.2 43.5 3.3 64h185.3c2.1-20.5 3.3-41.8 3.3-64s-1.2-43.5-3.3-64H155.3c-2.1 20.5-3.3 41.8-3.3 64zm324.7-96c-28.6-67.9-86.5-120.4-158-141.6 24.4 33.8 41.2 84.7 50 141.6h108zM177.2 18.4C105.8 39.6 47.8 92.1 19.3 160h108c8.7-56.9 25.5-107.8 49.9-141.6zM487.4 192H372.7c2.1 21 3.3 42.5 3.3 64s-1.2 43-3.3 64h114.6c5.5-20.5 8.6-41.8 8.6-64s-3.1-43.5-8.5-64zM120 256c0-21.5 1.2-43 3.3-64H8.6C3.2 212.5 0 233.8 0 256s3.2 43.5 8.6 64h114.6c-2-21-3.2-42.5-3.2-64zm39.5 96c14.5 89.3 48.7 152 88.5 152s74-62.7 88.5-152h-177zm159.3 141.6c71.4-21.2 129.4-73.7 158-141.6h-108c-8.8 56.9-25.6 107.8-50 141.6zM19.3 352c28.6 67.9 86.5 120.4 158 141.6-24.4-33.8-41.2-84.7-50-141.6h-108z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "navigation.instant", "navigation.tracking", "navigation.top", "navigation.indexes", "navigation.tabs.sticky", "search.highlight", "search.suggest"], "translations": {"clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "search.config.lang": "pt", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Buscar", "search.result.placeholder": "Digite para iniciar a busca", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.term.missing": "Ausente", "select.version.title": "Selecione a vers\u00e3o"}, "search": "../../../assets/javascripts/workers/search.092fa1f6.min.js"}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.e3b2bf44.min.js"></script>
+      
+        <script src="../../../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

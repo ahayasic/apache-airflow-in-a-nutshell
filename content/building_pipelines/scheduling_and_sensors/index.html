@@ -1,0 +1,1368 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="Alisson Hayasi da Costa">
+      
+      
+        <link rel="canonical" href="https://ahayasic.github.io/apache-airflow-in-a-nutshell/content/building_pipelines/scheduling_and_sensors/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.10">
+    
+    
+      
+        <title>Agendamento e Sensores - Apache Airflow in a Nutshell</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.d6be258b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700%7CDM+Mono&display=fallback">
+        <style>:root{--md-text-font:"Source Sans Pro";--md-code-font:"DM Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#agendamento-e-sensores" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../../.." title="Apache Airflow in a Nutshell" class="md-header__button md-logo" aria-label="Apache Airflow in a Nutshell" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Apache Airflow in a Nutshell
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Agendamento e Sensores
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Trocar para Modo Escuro"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Trocar para Modo Escuro" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Trocar para Modo Claro"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Trocar para Modo Claro" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Limpar" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ahayasic/apache-airflow-in-a-nutshell" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ahayasic/apache-airflow-in-a-nutshell
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Apache Airflow in a Nutshell" class="md-nav__button md-logo" aria-label="Apache Airflow in a Nutshell" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Apache Airflow in a Nutshell
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ahayasic/apache-airflow-in-a-nutshell" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ahayasic/apache-airflow-in-a-nutshell
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Início
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../about/" class="md-nav__link">
+        Sobre o Autor
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Introdução ao Apache Airflow
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Introdução ao Apache Airflow" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Introdução ao Apache Airflow
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../introduction_to_apache_airflow/introduction_to_apache_airflow/" class="md-nav__link">
+        Introdução
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../introduction_to_apache_airflow/essential_concepts_and_components/" class="md-nav__link">
+        Conceitos e Componentes Essenciais
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Construindo Pipelines
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Construindo Pipelines" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Construindo Pipelines
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Agendamento e Sensores
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Agendamento e Sensores
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introducao" class="md-nav__link">
+    Introdução
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configurando-o-agendamento-de-dags" class="md-nav__link">
+    Configurando o Agendamento de DAGs
+  </a>
+  
+    <nav class="md-nav" aria-label="Configurando o Agendamento de DAGs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intervalos-baseados-em-cron" class="md-nav__link">
+    Intervalos Baseados em Cron
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intervalos-baseados-em-frequencia" class="md-nav__link">
+    Intervalos Baseados em Frequência
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#catchup-backfill" class="md-nav__link">
+    Catchup &amp; Backfill
+  </a>
+  
+    <nav class="md-nav" aria-label="Catchup &amp; Backfill">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#datas-de-execucao-de-uma-dag" class="md-nav__link">
+    Datas de execução de uma DAG
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensores" class="md-nav__link">
+    Sensores
+  </a>
+  
+    <nav class="md-nav" aria-label="Sensores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#condicoes-personalizadas" class="md-nav__link">
+    Condições Personalizadas
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sensores-deadlock" class="md-nav__link">
+    Sensores &amp; Deadlock
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#triggando-outras-dags" class="md-nav__link">
+    Triggando outras DAGs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exemplos" class="md-nav__link">
+    Exemplos
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referencias" class="md-nav__link">
+    Referências
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../templating_tasks/" class="md-nav__link">
+        Jinja Templates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies_between_tasks/" class="md-nav__link">
+        Dependências entre Tarefas
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../running_tasks_in_containers/" class="md-nav__link">
+        Executando Tarefas em Containers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing_dags/" class="md-nav__link">
+        Testando DAGs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Indo Além
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Indo Além" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Indo Além
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../going_deeper/communicating_external_systems/" class="md-nav__link">
+        Comunicando com Sistemas Externos
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../going_deeper/creating_custom_components/" class="md-nav__link">
+        Criando Componentes Personalizados
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Boas Práticas & Receitas
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Boas Práticas & Receitas" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Boas Práticas & Receitas
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../best_practices/best_practices/" class="md-nav__link">
+        Boas Práticas
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../best_practices/recipes/" class="md-nav__link">
+        Receitas
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          Operando e Administrando Apache Airflow
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Operando e Administrando Apache Airflow" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Operando e Administrando Apache Airflow
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin_ops/operating_airflow/" class="md-nav__link">
+        Administrando o Airflow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin_ops/running_airflow_locally/" class="md-nav__link">
+        Executando o Aiflow Localmente
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin_ops/running_airflow_in_the_clouds/" class="md-nav__link">
+        Executando o Airflow na Nuvem
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introducao" class="md-nav__link">
+    Introdução
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configurando-o-agendamento-de-dags" class="md-nav__link">
+    Configurando o Agendamento de DAGs
+  </a>
+  
+    <nav class="md-nav" aria-label="Configurando o Agendamento de DAGs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intervalos-baseados-em-cron" class="md-nav__link">
+    Intervalos Baseados em Cron
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intervalos-baseados-em-frequencia" class="md-nav__link">
+    Intervalos Baseados em Frequência
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#catchup-backfill" class="md-nav__link">
+    Catchup &amp; Backfill
+  </a>
+  
+    <nav class="md-nav" aria-label="Catchup &amp; Backfill">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#datas-de-execucao-de-uma-dag" class="md-nav__link">
+    Datas de execução de uma DAG
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensores" class="md-nav__link">
+    Sensores
+  </a>
+  
+    <nav class="md-nav" aria-label="Sensores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#condicoes-personalizadas" class="md-nav__link">
+    Condições Personalizadas
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sensores-deadlock" class="md-nav__link">
+    Sensores &amp; Deadlock
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#triggando-outras-dags" class="md-nav__link">
+    Triggando outras DAGs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exemplos" class="md-nav__link">
+    Exemplos
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referencias" class="md-nav__link">
+    Referências
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+<h1 id="agendamento-e-sensores">Agendamento e Sensores<a class="headerlink" href="#agendamento-e-sensores" title="Permanent link">&para;</a></h1>
+<h2 id="introducao">Introdução<a class="headerlink" href="#introducao" title="Permanent link">&para;</a></h2>
+<p>DAGs são disparadas de duas formas:</p>
+<ul>
+<li>Manualmente por meio da UI ou API.</li>
+<li>Automaticamente por meio de uma política de disparo.</li>
+</ul>
+<p>Já para que as DAGs sejam "disparáveis" (i.e. executáveis) elas precisam de:</p>
+<ul>
+<li>Uma data de início a partir do qual podem ser executadas.</li>
+<li>Uma política de disparo que pode ser (além do disparo manual): um intervalo de execução e/ou um critério condicional.</li>
+</ul>
+<p>Essas configurações são definidas durante a inicialização (i.e. criação do objeto) da DAG.</p>
+<h2 id="configurando-o-agendamento-de-dags">Configurando o Agendamento de DAGs<a class="headerlink" href="#configurando-o-agendamento-de-dags" title="Permanent link">&para;</a></h2>
+<p>Chamamos de agendamento (ou escalonamento) o procedimento executado pelo Airflow de definir quando uma DAG deve ser executada.</p>
+<p>O agendamento é configurado através de três parâmetros principais: <code>start_date</code>, <code>schedule_interval</code> e <code>end_date</code>. Todos estes parâmetros são atribuidos durante a inicialização da DAG.</p>
+<ul>
+<li><strong><code>start_date</code> [obrigatório]</strong>. Momento a partir do qual a DAG em questão estará disponível para ser executada. Note que o argumento <code>start_date</code> é obrigatório durante a inicialização pois sem uma data de início é impossível para o Airflow saber se a DAG pode ou não ser executada.</li>
+<li><strong><code>schedule_interval</code></strong>. Intervalo de execução da DAG. Por padrão, o valor de <code>schedule_interval</code> é <code>None</code>, o que significa que a DAG em questão só será executada quando triggada manualmente.</li>
+<li><strong><code>end_date</code></strong>. Momento até onde a DAG deve ser executada.</li>
+</ul>
+<p>Abaixo, um exemplo de uma DAG com escalonamento diário.</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="n">dag</span> <span class="o">=</span> <span class="n">DAG</span><span class="p">(</span>
+<span class="linenos" data-linenos="2 "></span>    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;02_daily_schedule&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="3 "></span>    <span class="n">schedule_interval</span><span class="o">=</span><span class="s2">&quot;@daily&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="4 "></span>    <span class="n">start_date</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="linenos" data-linenos="5 "></span>    <span class="o">...</span>
+<span class="linenos" data-linenos="6 "></span><span class="p">)</span>
+</code></pre></div>
+<p>Uma vez definida a DAG, o Airflow irá agendar sua primeira execução para o primeiro intervalo a partir da data de início.</p>
+<div class="admonition example">
+<p class="admonition-title">Exemplo</p>
+<p>Se definirmos que uma DAG está disponível para ser executada a partir do dia <strong>09 de Agosto de 2021</strong> às <strong>00hrs</strong> com <strong>intervalo de execução de 15 minutos</strong>, a primeira execução será agendada para 00:15, a segunda execução será agendada para 00:30 e assim sucessivamente.</p>
+</div>
+<p>Se não definirmos uma data final, o Airflow irá agendar e executar a DAG em questão eternamente. Assim, caso exista uma data final definitiva a partir do qual a DAG não deverá ser executada, podemos utilizar o argumento <code>end_date</code> da mesma forma que <code>start_date</code> para limitar os agendamentos.</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="n">dag</span> <span class="o">=</span> <span class="n">DAG</span><span class="p">(</span>
+<span class="linenos" data-linenos="2 "></span>    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;03_with_end_date&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="3 "></span>    <span class="n">schedule_interval</span><span class="o">=</span><span class="s2">&quot;@daily&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="4 "></span>    <span class="n">start_date</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2019</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+<span class="linenos" data-linenos="5 "></span>    <span class="n">end_date</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2019</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+<span class="linenos" data-linenos="6 "></span><span class="p">)</span>
+</code></pre></div>
+<h3 id="intervalos-baseados-em-cron">Intervalos Baseados em Cron<a class="headerlink" href="#intervalos-baseados-em-cron" title="Permanent link">&para;</a></h3>
+<p>Podemos definir intervalos de execução complexos usando a mesma sintaxe que usamos no <a href="https://cron-job.org/en/">cron</a>.</p>
+<p>Basicamente, a sintaxe é composta por cinco componentes organizados da seguinte forma:</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="c1"># ┌─────── minute (0 - 59)</span>
+<span class="linenos" data-linenos="2 "></span><span class="c1"># │ ┌────── hour (0 - 23)</span>
+<span class="linenos" data-linenos="3 "></span><span class="c1"># │ │ ┌───── day of the month (1 - 31)</span>
+<span class="linenos" data-linenos="4 "></span><span class="c1"># │ │ │ ┌───── month (1 - 12)</span>
+<span class="linenos" data-linenos="5 "></span><span class="c1"># │ │ │ │ ┌──── day of the week (0 - 6) (Sunday to Saturday;</span>
+<span class="linenos" data-linenos="6 "></span><span class="c1"># │ │ │ │ │ 7 is also Sunday on some systems)</span>
+<span class="linenos" data-linenos="7 "></span><span class="c1"># * * * * *</span>
+</code></pre></div>
+<p style="text-align: center; font-size: 0.75rem; margin-bottom: 1.5rem;">
+    <b>Fonte:</b> <a target="_blank" href="https://www.amazon.com.br/Data-Pipelines-Apache-Airflow-Harenslak/dp/1617296902">Data Pipelines with Apache Airflow (2021) by Bas    Harenslak and Julian de Ruiter</a>
+</p>
+
+<p>O carácter <code>*</code> significa que o valor do campo em questão não importa. Assim, podemos definir desde intervalos simples e convencionais:</p>
+<ul>
+<li><code>0 * * * *</code>. Executa a cada hora</li>
+</ul>
+<p>Até intervalos mais complexos</p>
+<ul>
+<li><code>0 0 1 * *</code>. Executa a cada primeiro dia do mês (às 00hrs)</li>
+</ul>
+<p>Também podemos utilizar de vírgulas (<code>,</code>) para definir conjuntos de valores e hífen (<code>-</code>) para intervalos de valores. Por exemplo:</p>
+<ul>
+<li><code>0 0 * * MON, WED, FRI</code>. Executa toda segunda, quarta e sexta-feira (às 00hrs)</li>
+<li><code>0 0,12 * * MON-FRI</code>. Executa às 00hrs e 12hrs de segunda à sexta-feira</li>
+</ul>
+<p>Alternativamente, podemos recorrer à ferramentas como <a href="https://crontab.guru/">crontab.guru</a> e <a href="https://crontab-generator.org/">crontab-generator</a> para definirmos as expressões de forma mais fácil.</p>
+<p>O Airflow também fornece alguns macros que podemos utilizar com mais facilidade. Os mais comuns são:</p>
+<table>
+<thead>
+<tr>
+<th align="center">Macro</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><code>@once</code></td>
+<td>Executa uma única vez</td>
+</tr>
+<tr>
+<td align="center"><code>@hourly</code></td>
+<td>Executa a cada começo de hora</td>
+</tr>
+<tr>
+<td align="center"><code>@daily</code></td>
+<td>Executa todos os dias às 00hrs</td>
+</tr>
+<tr>
+<td align="center"><code>@weekly</code></td>
+<td>Executa todo domingo às 00hrs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="intervalos-baseados-em-frequencia">Intervalos Baseados em Frequência<a class="headerlink" href="#intervalos-baseados-em-frequencia" title="Permanent link">&para;</a></h3>
+<p>Embora poderosas, expressões cron são incapazes de representar agendamentos baseados em frequência. Por exemplo, não é possível definir (de forma adequada) um intervalo de "três em três em dias".</p>
+<p>Por conta disso, o Airflow também aceita instâncias <code>timedelta</code> para definir intervalos de execução. Com isso, podemos definir uma DAG que é executada a cada três dias a partir da data de início.</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="n">dag</span> <span class="o">=</span> <span class="n">DAG</span><span class="p">(</span>
+<span class="linenos" data-linenos="2 "></span>    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;04_time_delta&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="3 "></span>    <span class="n">schedule_interval</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+<span class="linenos" data-linenos="4 "></span>    <span class="n">start_date</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2019</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+<span class="linenos" data-linenos="5 "></span>    <span class="n">end_date</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2019</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+<span class="linenos" data-linenos="6 "></span><span class="p">)</span>
+</code></pre></div>
+<h2 id="catchup-backfill">Catchup &amp; Backfill<a class="headerlink" href="#catchup-backfill" title="Permanent link">&para;</a></h2>
+<p>Por padrão, o Airflow sempre irá escalonar e executar toda e qualquer execução <strong>passada</strong> que <strong>deveria ter sido executada</strong> mas que por algum motivo <strong>não foi</strong>. Este comportamento é denominado <em>"backfill"</em> e é controlado pelo argumento <code>catchup</code> <span class="arithmatex">\(-\)</span> presente na inicialização da DAG.</p>
+<p>Caso este comportamento não seja desejado, basta desativá-lo atribuindo <code>False</code> ao parâmetro. Dessa forma, o Airflow irá executar a DAG apenas a partir do primeiro intervalo de execução mais próximo.</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="n">dag</span> <span class="o">=</span> <span class="n">DAG</span><span class="p">(</span>
+<span class="linenos" data-linenos="2 "></span>    <span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;09_no_catchup&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="3 "></span>    <span class="n">schedule_interval</span><span class="o">=</span><span class="s2">&quot;@daily&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="4 "></span>    <span class="n">start_date</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2019</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+<span class="linenos" data-linenos="5 "></span>    <span class="n">end_date</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2019</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+<span class="linenos" data-linenos="6 "></span>    <span class="n">catchup</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="linenos" data-linenos="7 "></span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>Se uma DAG for ativada dentro de um período intervalar, o Airflow irá agendar a execução da DAG para o início deste período.</p>
+<p>Por exemplo, considerando uma DAG com <code>start_date=datetime(2021, 08, 10)</code> e <code>schedule_interval="@daily"</code>; se ativarmos a DAG no dia 15 do mesmo mês às 12hrs, o Airflow irá definir que a primeira execução da DAG deverá ter ocorrido às 00hrs do dia 15 e irá executar a DAG imediatamente.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Para mudar o valor padrão do <code>catchup</code> de <code>True</code> para <code>False</code>, basta acessar o arquivo de configuração e modificar o parâmetro <code>catchup_by_default</code>.</p>
+</div>
+<p>Embora o <em>backfilling</em> possa ser indesejado em algumas situações, seu uso é muito útil para a reexecução de tarefas históricas.</p>
+<p>Por exemplo, suponha as seguintes tarefas <code>download_data &gt;&gt; process_data</code>. Considerando que os dados adquiridos através da tarefa <code>download_data</code> ainda sejam reacessáveis localmente, podemos realizar as alterações desejadas em <code>process_data</code> e então limparmos as execuções passadas (através do botão <span class="keys"><kbd>Clear</kbd></span>) para que assim o Airflow reagende e execute a nova implementação de <code>process_data</code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Atenção</p>
+<p>A reexecução das DAGs não ocorre de forma ordenada (i.e. de acordo com a data de execução), mas sim de forma paralela.</p>
+<p>Para que o <em>backfilling</em> ocorra de forma ordenada, é necessário que o argumento <code>depends_on_past</code> presente na inicialização das tarefas seja <code>True</code>.</p>
+<p>Detalhes sobre o argumento serão apresentados a diante.</p>
+</div>
+<h3 id="datas-de-execucao-de-uma-dag">Datas de execução de uma DAG<a class="headerlink" href="#datas-de-execucao-de-uma-dag" title="Permanent link">&para;</a></h3>
+<p>Em diversas situações é útil sabermos as datas de execução de uma DAG. Por conta disso, o Airflow nos permite acessar tanto a data da execução corrente da DAG, quanto a data da execução imediatamente anterior e posterior.</p>
+<ul>
+<li>
+<p><code>execution_date.</code> Data da execução corrente de DAG.</p>
+<p>Contudo, diferente do que o nome sugere, a data de execução marcada na DAG não é a data em que ela foi executada, mas sim no momento em que ela deveria ser executada, com base no intervalo de execução.</p>
+<div class="admonition example">
+<p class="admonition-title">Exemplo</p>
+<p>Suponha que temos uma DAG configurada para executar diariamente a partir do dia 2020-01-01.</p>
+<p>Após dez dias de execução, fizemos algumas alterações de implementação e agora precisamos que as execuções dos últimos dez dias sejam refeitas. Neste caso, ao acionarmos a opção <span class="keys"><kbd>Clear</kbd></span>, as datas de execução da DAG permanecerão de acordo com a data em que foram agendadas originalmente.</p>
+<p>Agora, se triggarmos manualmente a DAG antes da próxima execução agendada, a <code>execution_date</code> será o momento em que a DAG foi de fato disparada.</p>
+</div>
+</li>
+<li>
+<p><code>previous_execution_date</code>. Data de execução (<code>execution_date</code>) da DAG imediatamente anterior.</p>
+</li>
+<li><code>next_execution_date</code>. Próxima data de execução (<code>execution_date</code>) agendada para a DAG.</li>
+</ul>
+<p>O acesso a essas informações pode ser feito através do contexto da DAG[^1] ou por meio dos macros pré-definidos:</p>
+<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Macros</label><div class="tabbed-content">
+<table>
+<thead>
+<tr>
+<th>Macro</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{{ ds }}</code></td>
+<td>Data de execução no formato YYYY-MM-DD</td>
+</tr>
+<tr>
+<td><code>{{ ds_nodash }}</code></td>
+<td>Data de execução no formato YYYYMMDD</td>
+</tr>
+<tr>
+<td><code>{{ prev_ds }}</code></td>
+<td>Data de execução anterior no formato YYYY-MM-DD</td>
+</tr>
+<tr>
+<td><code>{{ next_ds }}</code></td>
+<td>Próxima data de execução no formato YYYY-MM-DD</td>
+</tr>
+</tbody>
+</table>
+</div>
+<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Uso</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="n">fetch_events</span> <span class="o">=</span> <span class="n">BashOperator</span><span class="p">(</span>
+<span class="linenos" data-linenos="2 "></span>    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;fetch_events&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="3 "></span>    <span class="n">bash_command</span><span class="o">=</span><span class="p">(</span>
+<span class="linenos" data-linenos="4 "></span>        <span class="sa">f</span><span class="s2">&quot;curl -o /data/events.json </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="linenos" data-linenos="5 "></span>        <span class="s2">&quot;start_date={{ ds }}&quot;</span>
+<span class="linenos" data-linenos="6 "></span>        <span class="s2">&quot;end_date={{ next_ds }}&quot;</span>
+<span class="linenos" data-linenos="7 "></span>    <span class="p">),</span>
+<span class="linenos" data-linenos="8 "></span>    <span class="o">...</span>
+<span class="linenos" data-linenos="9 "></span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<h2 id="sensores">Sensores<a class="headerlink" href="#sensores" title="Permanent link">&para;</a></h2>
+<p>Além de execuções automáticas realizadas em intervalos de tempo, podemos querer disparar uma DAG sempre que um critério condicional for atendido. No Airflow, podemos fazer isso através de Sensores.</p>
+<p>Um sensor é um tipo especial de operador que verifica continuamente (em um intervalo de tempo) se uma certa condição é verdadeira ou falsa.</p>
+<ul>
+<li>Se verdadeira, o sensor tem seu estado alterado para bem-sucedido e o restante do pipeline é executado.</li>
+<li>Se falsa, o sensor continua tentando até que a condição seja verdadeira ou um tempo limite (timeout) for atingido.</li>
+</ul>
+<p>Um sensor muito utilizado é o <code>FileSensor</code> que verifica a existência de um arquivo e retorna verdadeiro caso o arquivo exista. Caso contrário, o <code>FileSensor</code> retorna <code>False</code> e refaz a checagem após um intervalo de 60 segundos (valor padrão). Este ciclo permanece até que o arquivo venha a existir ou um tempo limite seja atigindo (por padrão, 7 dias).</p>
+<p>Podemos configurar o intervalo de reavalição através do argumento <code>poke_interval</code> que espera receber, em segundos, o período de espera entre cada checagem. Já o timeout é configurado por meio do argumento <code>timeout</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="1 "></span><span class="kn">from</span> <span class="nn">airflow.sensors.filesystem</span> <span class="kn">import</span> <span class="n">FileSensor</span>
+<span class="linenos" data-linenos="2 "></span>
+<span class="linenos" data-linenos="3 "></span><span class="n">wait_for_file</span> <span class="o">=</span> <span class="n">FileSensor</span><span class="p">(</span>
+<span class="linenos" data-linenos="4 "></span>    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;wait_for_file&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="5 "></span>    <span class="n">filepath</span><span class="o">=</span><span class="s2">&quot;/data/file.csv&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="6 "></span>    <span class="n">poke_interval</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># 10 seconds</span>
+<span class="linenos" data-linenos="7 "></span>    <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span>  <span class="c1"># 5 minutes</span>
+<span class="linenos" data-linenos="8 "></span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>O <code>FileSensor</code> suporta <a href="#">wildcards</a> (e.g. astericos [<code>*</code>]), o que nos permite criar padrões de correspondência nos nomes dos arquivos.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Informação</p>
+<p>Chamamos de <em>poking</em> a rotina realizada pelo sensor de execução e checagem contínua de uma condição.</p>
+</div>
+<h3 id="condicoes-personalizadas">Condições Personalizadas<a class="headerlink" href="#condicoes-personalizadas" title="Permanent link">&para;</a></h3>
+<p>Há diversos cenários em que as condições de execução de um pipeline são mais complexas do que a existência ou não de um arquivo. Em situações como essa, podemos recorrer a uma implementação baseada em Python através do <code>PythonSensor</code> ou então criarmos nosso próprio sensor.</p>
+<p>O <code>PythonSensor</code> assim como o <code>PythonOperator</code> executa uma função Python. Contudo, essa função deve retornar um valor booleano: <code>True</code> indicando que a condição foi cumprida, <code>False</code> caso contrário.</p>
+<p>Já para criarmos nosso próprio sensor, basta estendermos a classe <code>BaseSensorOperator</code>. Informações sobre a criação de componentes personalizados são apresentados na seção <a href="https://ahayasic.github.io/apache-airflow-in-a-nutshell/content/going_deeper/creating_custom_components/">Criando Componentes Personalizados</a></p>
+<h3 id="sensores-deadlock">Sensores &amp; Deadlock<a class="headerlink" href="#sensores-deadlock" title="Permanent link">&para;</a></h3>
+<p>O tempo limite padrão de sete dias dos sensores possui uma falha silenciosa.</p>
+<p>Suponha uma DAG cujo <code>schedule_interval</code> é de um dia. Se ao longo do tempo as condições não foram atendidas, teremos um acumulo de DAGs e tarefas para serem executadas considerável.</p>
+<p>O problema deste cenário é que o Airflow possui um limite máximo de tarefas que ele consegue executar paralalemente. Portanto, caso o limite seja atingido, as tarefas ficarão bloqueadas e nenhuma execução será feita. Este comportamento é denominado <em>sensor deadlock</em>.</p>
+<p>Embora seja possível aumentar o número de tarefas executáveis em paralelo, as práticas recomendadas para evitar esse tipo de situação são:</p>
+<ul>
+<li>Definir um <em>timeout</em> menor que o <code>schedule_interval</code>. Com isso, as execuções irão falhar antes da próxima começar.</li>
+<li>
+<p>Alterar a forma como os sensores são acionados pelo <em>scheduler</em>. Por padrão, os sensores trabalham no modo <code>poke</code> (o que pode gerar o <em>deadlock</em>). Através do argumento <code>mode</code> presente na classe do sensor em questão, podemos alterar o acionamento do sensor para <code>reschedule</code>.</p>
+<p>No modo <code>reschedule</code>, o sensor só permanecerá ativo como uma tarefa enquanto estiver fazendo as verificações. Ao final da verificação, caso o critério de sucesso não seja cumprido, o <em>scheduler</em> colocará o sensor em estado de espera, liberando assim uma posição (<em>slot</em>) para outras tarefas serem executadas.</p>
+</li>
+</ul>
+<h2 id="triggando-outras-dags">Triggando outras DAGs<a class="headerlink" href="#triggando-outras-dags" title="Permanent link">&para;</a></h2>
+<div class="admonition failure">
+<p class="admonition-title">TODO</p>
+</div>
+<h2 id="exemplos">Exemplos<a class="headerlink" href="#exemplos" title="Permanent link">&para;</a></h2>
+<p>Para exemplos e casos de uso dos tópicos abordados nesta seção, acesse <a href="#">Estudos de Caso</a>.</p>
+<p>Para detalhes técnicos e práticas de uso, acesse <a href="#">Receitas &amp; Códigos Padrões</a>.</p>
+<h2 id="referencias">Referências<a class="headerlink" href="#referencias" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://www.amazon.com.br/Data-Pipelines-Apache-Airflow-Harenslak/dp/1617296902">Data Pipelines with Apache Airflow (2021) by Bas Harenslak and Julian de Ruiter</a></li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/concepts/index.html">Apache Airflow Documentation</a></li>
+<li><a href="https://www.astronomer.io/guides/">Airflow Guides by Astronomer</a></li>
+<li><a href="https://marclamberti.com/blog/">Marc Lamberti Blog</a></li>
+</ul>
+
+  
+
+<!-- Last updated date -->
+
+<hr />
+<div class="md-source-date">
+    <div class="row">
+        <div class="col-5">
+            <div class="custom-source-date__date">
+                <small>
+                    <!-- mkdocs-git-revision-date-localized-plugin -->
+                    
+                    Última atualização: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-02-10</span>
+
+                    
+                    <br />Criada: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-02-10</span>
+                    
+
+                    <!-- mkdocs-git-revision-date-plugin -->
+                    
+                </small>
+            </div>
+        </div>
+        <div class="col-7">
+            <div class="row">
+                <div class="custom-source-date__socials">
+                    <img class="custom-source-date__socials__img" src="https://raw.githubusercontent.com/ahayasic/ahayasic.github.io/main/assets/img/about.jpg">
+                    <div class="custom-source-date__socials__name"><small>Alisson Hayasi da Costa</small></div>
+                    <div class="custom-source-date__socials__icons">
+                        <a href="https://linkedin.com/in/ahayasic/" target="_blank">
+                            <span class="twemoji linkedin">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z" /></svg>
+                            </span>
+                        </a>
+                        &middot;
+                        <a href="https://github.com/ahayasic" target="_blank">
+                            <span class="twemoji github">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                            </span>
+                        </a>
+                        &middot;
+                        <a href="https://ahayasic.github.io/" target="_blank">
+                            <span class="twemoji globe">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M1.543 7.25h2.733c.144-2.074.866-3.756 1.58-4.948.12-.197.237-.381.353-.552a6.506 6.506 0 00-4.666 5.5zm2.733 1.5H1.543a6.506 6.506 0 004.666 5.5 11.13 11.13 0 01-.352-.552c-.715-1.192-1.437-2.874-1.581-4.948zm1.504 0h4.44a9.637 9.637 0 01-1.363 4.177c-.306.51-.612.919-.857 1.215a9.978 9.978 0 01-.857-1.215A9.637 9.637 0 015.78 8.75zm4.44-1.5H5.78a9.637 9.637 0 011.363-4.177c.306-.51.612-.919.857-1.215.245.296.55.705.857 1.215A9.638 9.638 0 0110.22 7.25zm1.504 1.5c-.144 2.074-.866 3.756-1.58 4.948-.12.197-.237.381-.353.552a6.506 6.506 0 004.666-5.5h-2.733zm2.733-1.5h-2.733c-.144-2.074-.866-3.756-1.58-4.948a11.738 11.738 0 00-.353-.552 6.506 6.506 0 014.666 5.5zM8 0a8 8 0 100 16A8 8 0 008 0z"></path></svg>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+              
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+            Voltar ao topo
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Rodapé">
+      
+        
+        <a href="../../introduction_to_apache_airflow/essential_concepts_and_components/" class="md-footer__link md-footer__link--prev" aria-label="Anterior: Conceitos e Componentes Essenciais" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Anterior
+              </span>
+              Conceitos e Componentes Essenciais
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../templating_tasks/" class="md-footer__link md-footer__link--next" aria-label="Próximo: Jinja Templates" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Próximo
+              </span>
+              Jinja Templates
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2021 Alisson Hayasi da Costa
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/ahayasic/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/ahayasic" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://ahayasic.github.io/" target="_blank" rel="noopener" title="ahayasic.github.io" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M336.5 160C322 70.7 287.8 8 248 8s-74 62.7-88.5 152h177zM152 256c0 22.2 1.2 43.5 3.3 64h185.3c2.1-20.5 3.3-41.8 3.3-64s-1.2-43.5-3.3-64H155.3c-2.1 20.5-3.3 41.8-3.3 64zm324.7-96c-28.6-67.9-86.5-120.4-158-141.6 24.4 33.8 41.2 84.7 50 141.6h108zM177.2 18.4C105.8 39.6 47.8 92.1 19.3 160h108c8.7-56.9 25.5-107.8 49.9-141.6zM487.4 192H372.7c2.1 21 3.3 42.5 3.3 64s-1.2 43-3.3 64h114.6c5.5-20.5 8.6-41.8 8.6-64s-3.1-43.5-8.5-64zM120 256c0-21.5 1.2-43 3.3-64H8.6C3.2 212.5 0 233.8 0 256s3.2 43.5 8.6 64h114.6c-2-21-3.2-42.5-3.2-64zm39.5 96c14.5 89.3 48.7 152 88.5 152s74-62.7 88.5-152h-177zm159.3 141.6c71.4-21.2 129.4-73.7 158-141.6h-108c-8.8 56.9-25.6 107.8-50 141.6zM19.3 352c28.6 67.9 86.5 120.4 158 141.6-24.4-33.8-41.2-84.7-50-141.6h-108z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "navigation.instant", "navigation.tracking", "navigation.top", "navigation.indexes", "navigation.tabs.sticky", "search.highlight", "search.suggest"], "translations": {"clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "search.config.lang": "pt", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Buscar", "search.result.placeholder": "Digite para iniciar a busca", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.term.missing": "Ausente", "select.version.title": "Selecione a vers\u00e3o"}, "search": "../../../assets/javascripts/workers/search.092fa1f6.min.js"}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.e3b2bf44.min.js"></script>
+      
+        <script src="../../../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
